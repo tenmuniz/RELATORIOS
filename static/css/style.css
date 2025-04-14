@@ -137,6 +137,18 @@ textarea.form-control {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
+.stat-box.bg-primary {
+  background-color: rgba(0, 116, 217, 0.7) !important;
+}
+
+.stat-box.bg-success {
+  background-color: rgba(46, 204, 113, 0.7) !important;
+}
+
+.stat-box.bg-info {
+  background-color: rgba(52, 152, 219, 0.7) !important;
+}
+
 .stat-value {
   font-size: 30px;
   font-weight: bold;

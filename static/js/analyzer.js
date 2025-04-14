@@ -47,19 +47,48 @@ function analyzeReport() {
   }
   
   try {
-    // Process the report text
+    // First do a client-side extraction to quickly display some results
     const results = extractDataFromReport(reportText);
     
-    // Display the results
-    displayResults(results);
-    
-    // Optional: Send to server for additional processing
-    sendToServer(reportText);
+    // Then send to server for processing and storage
+    fetch('/analyze', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ text: reportText })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro na requisição ao servidor');
+      }
+      return response.json();
+    })
+    .then(serverData => {
+      console.log('Server analysis complete:', serverData);
+      
+      if (serverData.success) {
+        // Display the results with totals from server
+        displayResults(serverData.data, serverData.totals);
+      } else {
+        // If server failed but we have client-side results, still show them
+        displayResults(results);
+        console.warn('Using client-side results due to server error');
+      }
+    })
+    .catch(error => {
+      console.error('Error sending data to server:', error);
+      // If server call fails, still display the client-side results
+      displayResults(results);
+      showError('Não foi possível salvar os dados no servidor. Mostrando resultados locais.');
+    })
+    .finally(() => {
+      loader.style.display = 'none';
+    });
     
   } catch (error) {
     console.error('Error analyzing report:', error);
     showError('Ocorreu um erro ao analisar o relatório. Verifique o formato do texto.');
-  } finally {
     loader.style.display = 'none';
   }
 }
@@ -133,14 +162,15 @@ function extractDataFromReport(text) {
 /**
  * Display the analysis results in the UI
  * @param {object} results - The extracted data
+ * @param {object} totals - The accumulated totals
  */
-function displayResults(results) {
-  // Update the results section
+function displayResults(results, totals) {
+  // Update the results section for current report
   document.getElementById('locationValue').textContent = results.location;
   document.getElementById('dateValue').textContent = results.date;
   document.getElementById('shiftValue').textContent = results.shift;
   
-  // Update the stats boxes
+  // Update the stats boxes for current report
   document.getElementById('peopleValue').textContent = results.people;
   document.getElementById('motorcyclesValue').textContent = results.motorcycles;
   document.getElementById('carsValue').textContent = results.cars;
@@ -157,6 +187,16 @@ function displayResults(results) {
   const shiftBadge = document.getElementById('shiftBadge');
   shiftBadge.textContent = results.shift === 'Diurno (07:30 às 19:30)' ? 'Diurno' : 
                           (results.shift === 'Noturno (19:30 às 07:30)' ? 'Noturno' : 'Turno Desconhecido');
+  
+  // Update totals if provided
+  if (totals) {
+    document.getElementById('totalPeopleValue').textContent = totals.people;
+    document.getElementById('totalMotorcyclesValue').textContent = totals.motorcycles;
+    document.getElementById('totalCarsValue').textContent = totals.cars;
+    document.getElementById('totalBicyclesValue').textContent = totals.bicycles;
+    document.getElementById('grandTotalValue').textContent = totals.totalInspections;
+    document.getElementById('reportsCountValue').textContent = totals.reportsCount;
+  }
   
   // Show the results section
   const resultsSection = document.getElementById('resultsSection');
