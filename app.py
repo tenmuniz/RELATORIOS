@@ -138,7 +138,14 @@ def analyze():
                 'APRESENTADO NA DELEGACIA',
                 'CONDUZIDO À DELEGACIA',
                 'CONDUZIDO PARA DELEGACIA',
-                'ENCAMINHADO À DELEGACIA'
+                'CONDUZINDO O MESMO ATÉ A DELEGACIA',
+                'CONDUZINDO A DELEGACIA',
+                'CONDUZINDO PARA A DELEGACIA',
+                'CONDUZINDO O',
+                'CONDUZINDO A',
+                'ENCAMINHADO À DELEGACIA',
+                'DETENÇÃO',
+                'DELEGACIA DE POLÍCIA'
             ]
             
             for phrase in presentation_phrases:
@@ -177,6 +184,23 @@ def analyze():
             
         if drugs_seized_count == 0 and ('DROGA' in normalized_text or 'ENTORPECENTE' in normalized_text):
             drugs_seized_count = 1  # Assume pelo menos uma apreensão se mencionado
+            
+        # Verificação adicional para contabilizar prisão quando há texto longo
+        # com palavras-chave que indicam prisão
+        if arrests_count == 0 and len(occurrence) > 50:
+            arrest_indicators = [
+                'DETENÇÃO', 'FAZENDO SUA DETENÇÃO', 
+                'PRESO EM FLAGRANTE', 'DELEGACIA DE POLÍCIA', 
+                'CONDUZINDO', 'CONDUZIDO', 'DETIDO'
+            ]
+            
+            for indicator in arrest_indicators:
+                if indicator in normalized_text:
+                    # Verificar se há pelo menos um nome próprio (palavras maiúsculas entre asteriscos)
+                    name_pattern = r'\*[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+\s+[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+\s+[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+\*'
+                    if re.search(name_pattern, normalized_text):
+                        arrests_count = 1
+                        break
         
         # Create new report
         new_report = Report(
