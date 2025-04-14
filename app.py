@@ -31,6 +31,37 @@ def index():
     """Render the main page."""
     return render_template("index.html")
 
+@app.route("/reset", methods=["POST"])
+def reset_database():
+    """
+    API endpoint to reset all data in the database.
+    This deletes all reports and resets the counters.
+    """
+    try:
+        # Excluir todos os relatórios
+        Report.query.delete()
+        db.session.commit()
+        
+        return jsonify({
+            "success": True,
+            "message": "Todos os dados foram resetados com sucesso",
+            "totals": {
+                "people": 0,
+                "motorcycles": 0,
+                "cars": 0,
+                "bicycles": 0,
+                "arrests": 0,
+                "seizedMotorcycles": 0,
+                "drugsSeized": 0,
+                "totalInspections": 0,
+                "reportsCount": 0
+            }
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao resetar o banco de dados: {str(e)}")
+        return jsonify({"error": f"Ocorreu um erro ao resetar os dados: {str(e)}"}), 500
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
     """

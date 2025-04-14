@@ -286,3 +286,61 @@ function exportToCSV() {
   // Implementation for a future enhancement
   alert('Funcionalidade de exportação será implementada em breve!');
 }
+
+/**
+ * Reset all database data
+ */
+function resetDatabase() {
+  if (confirm('ATENÇÃO: Esta ação irá apagar todos os dados do sistema. Deseja continuar?')) {
+    // Mostrar loader
+    document.getElementById('loader').style.display = 'block';
+    
+    fetch('/reset', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro ao resetar o banco de dados');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Database reset complete:', data);
+      
+      // Ocultar loader
+      document.getElementById('loader').style.display = 'none';
+      
+      // Atualizar os totais com zeros
+      document.getElementById('totalPeopleValue').textContent = 0;
+      document.getElementById('totalMotorcyclesValue').textContent = 0;
+      document.getElementById('totalCarsValue').textContent = 0;
+      document.getElementById('totalBicyclesValue').textContent = 0;
+      document.getElementById('grandTotalValue').textContent = 0;
+      document.getElementById('reportsCountValue').textContent = 0;
+      
+      // Atualizar os novos campos com zeros
+      if (document.getElementById('totalArrestsValue')) {
+        document.getElementById('totalArrestsValue').textContent = 0;
+      }
+      
+      if (document.getElementById('totalSeizedMotorcyclesValue')) {
+        document.getElementById('totalSeizedMotorcyclesValue').textContent = 0;
+      }
+      
+      if (document.getElementById('totalDrugsSeizedValue')) {
+        document.getElementById('totalDrugsSeizedValue').textContent = 0;
+      }
+      
+      // Exibir mensagem de sucesso
+      alert('Todos os dados foram resetados com sucesso!');
+    })
+    .catch(error => {
+      console.error('Error resetting database:', error);
+      document.getElementById('loader').style.display = 'none';
+      showError('Ocorreu um erro ao tentar resetar o banco de dados: ' + error.message);
+    });
+  }
+}
