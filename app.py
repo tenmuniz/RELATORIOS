@@ -76,6 +76,31 @@ def analyze():
         occurrence_match = re.search(r'OCORRÊNCIA[^:]*:\s*(.+?)(?=\n|$)', normalized_text, re.IGNORECASE)
         occurrence = occurrence_match[1].strip() if occurrence_match else "Sem ocorrência relevante"
         
+        # Extrair dados de prisões, apreensões de motos e apreensões de drogas
+        arrests_match = re.search(r'PRIS[ÕO]ES\s*:\s*(\d+)', normalized_text, re.IGNORECASE) or \
+                        re.search(r'PRESOS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+                        
+        seized_motorcycles_match = re.search(r'MOTOS\s*APREENDIDAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE) or \
+                                   re.search(r'APREENS[ÃA]O\s*DE\s*MOTOS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+                                   
+        drugs_match = re.search(r'DROGAS\s*APREENDIDAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE) or \
+                      re.search(r'APREENS[ÃA]O\s*DE\s*DROGAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+        
+        # Verificar texto da ocorrência para inferir valores não explícitos
+        arrests_count = int(arrests_match[1]) if arrests_match else 0
+        seized_motorcycles_count = int(seized_motorcycles_match[1]) if seized_motorcycles_match else 0
+        drugs_seized_count = int(drugs_match[1]) if drugs_match else 0
+        
+        # Se não encontrado explicitamente, tenta inferir do texto da ocorrência
+        if arrests_count == 0 and ('PRISÃO' in normalized_text or 'PRESO' in normalized_text):
+            arrests_count = 1  # Assume pelo menos uma prisão se mencionado no texto
+            
+        if seized_motorcycles_count == 0 and 'MOTO APREENDIDA' in normalized_text:
+            seized_motorcycles_count = 1  # Assume pelo menos uma moto apreendida se mencionado
+            
+        if drugs_seized_count == 0 and ('DROGA' in normalized_text or 'ENTORPECENTE' in normalized_text):
+            drugs_seized_count = 1  # Assume pelo menos uma apreensão se mencionado
+        
         # Create new report
         new_report = Report(
             location=location,
@@ -85,6 +110,9 @@ def analyze():
             motorcycles_count=int(motorcycles_match[1]) if motorcycles_match else 0,
             cars_count=int(cars_match[1]) if cars_match else 0,
             bicycles_count=int(bicycles_match[1]) if bicycles_match else 0,
+            arrests_count=arrests_count,
+            seized_motorcycles_count=seized_motorcycles_count,
+            drugs_seized_count=drugs_seized_count,
             occurrence=occurrence
         )
         
@@ -98,6 +126,9 @@ def analyze():
         total_motorcycles = sum(report.motorcycles_count for report in reports)
         total_cars = sum(report.cars_count for report in reports)
         total_bicycles = sum(report.bicycles_count for report in reports)
+        total_arrests = sum(report.arrests_count for report in reports)
+        total_seized_motorcycles = sum(report.seized_motorcycles_count for report in reports)
+        total_drugs_seized = sum(report.drugs_seized_count for report in reports)
         total_inspections = total_people + total_motorcycles + total_cars + total_bicycles
         
         # Return both the current report and the accumulated totals
@@ -109,6 +140,9 @@ def analyze():
                 "motorcycles": total_motorcycles,
                 "cars": total_cars,
                 "bicycles": total_bicycles,
+                "arrests": total_arrests,
+                "seizedMotorcycles": total_seized_motorcycles,
+                "drugsSeized": total_drugs_seized,
                 "totalInspections": total_inspections,
                 "reportsCount": len(reports)
             }

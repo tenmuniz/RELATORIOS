@@ -149,6 +149,14 @@ textarea.form-control {
   background-color: rgba(52, 152, 219, 0.7) !important;
 }
 
+.stat-box.bg-danger {
+  background-color: rgba(231, 76, 60, 0.7) !important;
+}
+
+.stat-box.bg-warning {
+  background-color: rgba(241, 196, 15, 0.7) !important;
+}
+
 .stat-value {
   font-size: 30px;
   font-weight: bold;

@@ -177,6 +177,19 @@ function displayResults(results, totals) {
   document.getElementById('bicyclesValue').textContent = results.bicycles;
   document.getElementById('totalValue').textContent = results.totalInspections;
   
+  // Atualizar os novos campos adicionados no relatório atual
+  if (document.getElementById('arrestsValue')) {
+    document.getElementById('arrestsValue').textContent = results.arrests || 0;
+  }
+  
+  if (document.getElementById('seizedMotorcyclesValue')) {
+    document.getElementById('seizedMotorcyclesValue').textContent = results.seizedMotorcycles || 0;
+  }
+  
+  if (document.getElementById('drugsSeizedValue')) {
+    document.getElementById('drugsSeizedValue').textContent = results.drugsSeized || 0;
+  }
+  
   // Update occurrence info
   document.getElementById('occurrenceValue').textContent = results.occurrence;
   
@@ -190,12 +203,26 @@ function displayResults(results, totals) {
   
   // Update totals if provided
   if (totals) {
+    // Estatísticas básicas
     document.getElementById('totalPeopleValue').textContent = totals.people;
     document.getElementById('totalMotorcyclesValue').textContent = totals.motorcycles;
     document.getElementById('totalCarsValue').textContent = totals.cars;
     document.getElementById('totalBicyclesValue').textContent = totals.bicycles;
     document.getElementById('grandTotalValue').textContent = totals.totalInspections;
     document.getElementById('reportsCountValue').textContent = totals.reportsCount;
+    
+    // Novos dados adicionados (prisões e apreensões)
+    if (document.getElementById('totalArrestsValue')) {
+      document.getElementById('totalArrestsValue').textContent = totals.arrests || 0;
+    }
+    
+    if (document.getElementById('totalSeizedMotorcyclesValue')) {
+      document.getElementById('totalSeizedMotorcyclesValue').textContent = totals.seizedMotorcycles || 0;
+    }
+    
+    if (document.getElementById('totalDrugsSeizedValue')) {
+      document.getElementById('totalDrugsSeizedValue').textContent = totals.drugsSeized || 0;
+    }
   }
   
   // Show the results section

@@ -13,6 +13,12 @@ class Report(db.Model):
     motorcycles_count = db.Column(db.Integer, default=0)
     cars_count = db.Column(db.Integer, default=0)
     bicycles_count = db.Column(db.Integer, default=0)
+    
+    # Novos campos para contabilização adicional
+    arrests_count = db.Column(db.Integer, default=0)
+    seized_motorcycles_count = db.Column(db.Integer, default=0)
+    drugs_seized_count = db.Column(db.Integer, default=0)
+    
     occurrence = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -31,7 +37,10 @@ class Report(db.Model):
             'people': self.people_count,
             'motorcycles': self.motorcycles_count,
             'cars': self.cars_count,
-            'bicycles': self.bicycles_count, 
+            'bicycles': self.bicycles_count,
+            'arrests': self.arrests_count,
+            'seizedMotorcycles': self.seized_motorcycles_count,
+            'drugsSeized': self.drugs_seized_count,
             'occurrence': self.occurrence,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'totalInspections': self.total_inspections
