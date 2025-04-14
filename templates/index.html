@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produtividade 20ª CIPM - Análise Inteligente</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <!-- Header Section -->
+  <header class="header">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <svg class="police-logo" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#FFDC00" d="M256 32c134.4 0 219.7 123.2 219.7 219.7C475.7 385.2 390.4 480 256 480S36.3 385.2 36.3 251.7C36.3 155.2 121.6 32 256 32zm14.1 258.8c5.8 4.7 14.2 4.7 20 0l69.9-55.4c7.4-5.9 9.9-16.2 6.4-24.9l-26.8-66.9c-3.8-9.6-16.2-14.2-25.5-9.9l-94.7 44c-9.5 4.4-13.8 15.5-9.9 25.1l26.8 66.9c3.4 8.4 11.8 14.2 20.9 14.2l12.9 6.9zM256 128c35.3 0 64 28.7 64 64s-28.7 64-64 64-64-28.7-64-64 28.7-64 64-64z"/>
+          </svg>
+          Produtividade 20ª CIPM
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container app-container">
+    <div class="row">
+      <!-- Input Section -->
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-header">
+            <i class="fas fa-file-alt me-2"></i> Entrada de Relatório
+          </div>
+          <div class="card-body">
+            <div id="errorMessage" class="error-message"></div>
+            
+            <div class="mb-3">
+              <textarea id="reportText" class="form-control" placeholder="Cole aqui o texto do relatório de ocorrência..."></textarea>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <button id="clearButton" class="btn btn-secondary">
+                <i class="fas fa-eraser me-2"></i>Limpar
+              </button>
+              <button id="analyzeButton" class="btn btn-primary">
+                <i class="fas fa-search me-2"></i>Analisar Relatório
+              </button>
+            </div>
+            
+            <div id="loader" class="loader"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Results Section - Hidden by default, shown after analysis -->
+      <div id="resultsSection" class="col-lg-12 results-section">
+        <div class="card">
+          <div class="card-header">
+            <i class="fas fa-chart-bar me-2"></i> Resultados da Análise
+            <span id="locationBadge" class="badge-location float-end"></span>
+            <span id="shiftBadge" class="badge-shift float-end"></span>
+          </div>
+          <div class="card-body">
+            <!-- Statistics Summary -->
+            <div class="row">
+              <div class="col-md-4 col-6">
+                <div class="stat-box">
+                  <div class="stat-value" id="peopleValue">0</div>
+                  <div class="stat-label">Pessoas a Pé</div>
+                </div>
+              </div>
+              <div class="col-md-4 col-6">
+                <div class="stat-box">
+                  <div class="stat-value" id="motorcyclesValue">0</div>
+                  <div class="stat-label">Motos</div>
+                </div>
+              </div>
+              <div class="col-md-4 col-6">
+                <div class="stat-box">
+                  <div class="stat-value" id="carsValue">0</div>
+                  <div class="stat-label">Carros</div>
+                </div>
+              </div>
+              <div class="col-md-6 col-6">
+                <div class="stat-box">
+                  <div class="stat-value" id="bicyclesValue">0</div>
+                  <div class="stat-label">Bicicletas</div>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="stat-box">
+                  <div class="stat-value" id="totalValue">0</div>
+                  <div class="stat-label">Total de Abordagens</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Detailed Information -->
+            <div class="report-summary mt-4">
+              <h5><i class="fas fa-info-circle me-2"></i>Detalhes do Relatório</h5>
+              <div class="row">
+                <div class="col-md-6">
+                  <p><span class="data-label">Local:</span> <span id="locationValue" class="data-value"></span></p>
+                  <p><span class="data-label">Data:</span> <span id="dateValue" class="data-value"></span></p>
+                  <p><span class="data-label">Turno:</span> <span id="shiftValue" class="data-value"></span></p>
+                </div>
+                <div class="col-md-6">
+                  <p><span class="data-label">Ocorrência:</span></p>
+                  <p id="occurrenceValue" class="data-value"></p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="mt-4 text-center">
+              <button class="btn btn-primary" onclick="window.print()">
+                <i class="fas fa-print me-2"></i>Imprimir Relatório
+              </button>
+              <button class="btn btn-secondary ms-2" onclick="exportToCSV()">
+                <i class="fas fa-file-csv me-2"></i>Exportar Dados
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>Sistema de Análise de Produtividade | 20ª CIPM © 2023</p>
+      <p class="small">Desenvolvido para a Polícia Militar do Pará</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="{{ url_for('static', filename='js/analyzer.js') }}"></script>
+</body>
+</html>
