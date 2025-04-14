@@ -321,7 +321,7 @@ function resetDatabase() {
       document.getElementById('grandTotalValue').textContent = 0;
       document.getElementById('reportsCountValue').textContent = 0;
       
-      // Atualizar os novos campos com zeros
+      // Atualizar os novos campos com zeros nos totais
       if (document.getElementById('totalArrestsValue')) {
         document.getElementById('totalArrestsValue').textContent = 0;
       }
@@ -333,6 +333,36 @@ function resetDatabase() {
       if (document.getElementById('totalDrugsSeizedValue')) {
         document.getElementById('totalDrugsSeizedValue').textContent = 0;
       }
+      
+      // Também zerar os valores do relatório atual
+      document.getElementById('peopleValue').textContent = 0;
+      document.getElementById('motorcyclesValue').textContent = 0;
+      document.getElementById('carsValue').textContent = 0;
+      document.getElementById('bicyclesValue').textContent = 0;
+      document.getElementById('totalValue').textContent = 0;
+      
+      if (document.getElementById('arrestsValue')) {
+        document.getElementById('arrestsValue').textContent = 0;
+      }
+      
+      if (document.getElementById('seizedMotorcyclesValue')) {
+        document.getElementById('seizedMotorcyclesValue').textContent = 0;
+      }
+      
+      if (document.getElementById('drugsSeizedValue')) {
+        document.getElementById('drugsSeizedValue').textContent = 0;
+      }
+      
+      // Limpar texto do relatório e dados de localização/data
+      document.getElementById('reportText').value = '';
+      document.getElementById('locationValue').textContent = '';
+      document.getElementById('dateValue').textContent = '';
+      document.getElementById('shiftValue').textContent = '';
+      document.getElementById('occurrenceValue').textContent = '';
+      
+      // Limpar badges
+      document.getElementById('locationBadge').textContent = '';
+      document.getElementById('shiftBadge').textContent = '';
       
       // Exibir mensagem de sucesso
       alert('Todos os dados foram resetados com sucesso!');
