@@ -92,10 +92,54 @@ def analyze():
         drugs_seized_count = int(drugs_match[1]) if drugs_match else 0
         
         # Se não encontrado explicitamente, tenta inferir do texto da ocorrência
-        if arrests_count == 0 and ('PRISÃO' in normalized_text or 'PRESO' in normalized_text or 
-                                  'APRESENTAÇÃO NA DELEGACIA' in normalized_text or 
-                                  'APRESENTADO NA DELEGACIA' in normalized_text):
-            arrests_count = 1  # Assume pelo menos uma prisão se mencionado no texto
+        if arrests_count == 0:
+            has_arrest_keywords = (
+                'PRISÃO' in normalized_text or 
+                'PRESO' in normalized_text or 
+                'APRESENTAÇÃO NA DELEGACIA' in normalized_text or 
+                'APRESENTADO NA DELEGACIA' in normalized_text
+            )
+            
+            # Verificação adicional para nomes próprios após menção de apresentação na delegacia
+            has_presentation_with_name = False
+            presentation_phrases = [
+                'APRESENTAÇÃO NA DELEGACIA', 
+                'APRESENTADO NA DELEGACIA',
+                'CONDUZIDO À DELEGACIA',
+                'CONDUZIDO PARA DELEGACIA',
+                'ENCAMINHADO À DELEGACIA'
+            ]
+            
+            for phrase in presentation_phrases:
+                if phrase in normalized_text:
+                    # Procurar por provável nome próprio após a frase
+                    pos = normalized_text.find(phrase) + len(phrase)
+                    next_text = normalized_text[pos:pos+150]  # Olhar os próximos 150 caracteres
+                    
+                    # Padrões comuns para nomes: palavras capitalizadas consecutivas ou com DE, DA, DOS entre elas
+                    # ou após "NOME:" ou "NACIONAL:"
+                    name_patterns = [
+                        r'NOME\s*:\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                        r'NACIONAL\s*:\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                        r'SR\s*\.?\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                        r'SRA\s*\.?\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                        r'INDIVÍDUO\s+([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                        r'CIDADÃO\s+([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                        r'SUSPEITO\s+([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                        r'([A-Z]+\s+(?:D[AEOI]S?\s+)?[A-Z]+\s+(?:D[AEOI]S?\s+)?[A-Z]+)'
+                    ]
+                    
+                    for pattern in name_patterns:
+                        name_match = re.search(pattern, next_text)
+                        if name_match:
+                            has_presentation_with_name = True
+                            break
+                    
+                    if has_presentation_with_name:
+                        break
+            
+            if has_arrest_keywords or has_presentation_with_name:
+                arrests_count = 1  # Assume pelo menos uma prisão
             
         if seized_motorcycles_count == 0 and 'MOTO APREENDIDA' in normalized_text:
             seized_motorcycles_count = 1  # Assume pelo menos uma moto apreendida se mencionado
