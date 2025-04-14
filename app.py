@@ -92,7 +92,9 @@ def analyze():
         drugs_seized_count = int(drugs_match[1]) if drugs_match else 0
         
         # Se não encontrado explicitamente, tenta inferir do texto da ocorrência
-        if arrests_count == 0 and ('PRISÃO' in normalized_text or 'PRESO' in normalized_text):
+        if arrests_count == 0 and ('PRISÃO' in normalized_text or 'PRESO' in normalized_text or 
+                                  'APRESENTAÇÃO NA DELEGACIA' in normalized_text or 
+                                  'APRESENTADO NA DELEGACIA' in normalized_text):
             arrests_count = 1  # Assume pelo menos uma prisão se mencionado no texto
             
         if seized_motorcycles_count == 0 and 'MOTO APREENDIDA' in normalized_text:
