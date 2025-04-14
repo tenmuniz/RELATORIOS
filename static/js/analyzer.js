@@ -227,6 +227,10 @@ function displayResults(results, totals) {
     if (document.getElementById('totalDrugsSeizedValue')) {
       document.getElementById('totalDrugsSeizedValue').textContent = totals.drugsSeized || 0;
     }
+    
+    if (document.getElementById('totalFugitivesValue')) {
+      document.getElementById('totalFugitivesValue').textContent = totals.fugitives || 0;
+    }
   }
   
   // Show the results section
@@ -355,6 +359,10 @@ function resetDatabase() {
       
       if (document.getElementById('drugsSeizedValue')) {
         document.getElementById('drugsSeizedValue').textContent = 0;
+      }
+      
+      if (document.getElementById('fugitivesValue')) {
+        document.getElementById('fugitivesValue').textContent = 0;
       }
       
       // Limpar texto do relatório e dados de localização/data
