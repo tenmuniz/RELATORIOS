@@ -25,7 +25,8 @@ class Report(db.Model):
     @property
     def total_inspections(self):
         """Calculate total inspections"""
-        return self.people_count + self.motorcycles_count + self.cars_count + self.bicycles_count
+        return (self.people_count + self.motorcycles_count + self.cars_count + self.bicycles_count + 
+                self.arrests_count + self.seized_motorcycles_count + self.drugs_seized_count)
         
     def to_dict(self):
         """Convert report to dictionary"""

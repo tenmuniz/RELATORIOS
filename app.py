@@ -206,7 +206,8 @@ def analyze():
         total_arrests = sum(report.arrests_count for report in reports)
         total_seized_motorcycles = sum(report.seized_motorcycles_count for report in reports)
         total_drugs_seized = sum(report.drugs_seized_count for report in reports)
-        total_inspections = total_people + total_motorcycles + total_cars + total_bicycles
+        # Total de inspeções deve incluir todos os itens contabilizados
+        total_inspections = total_people + total_motorcycles + total_cars + total_bicycles + total_arrests + total_seized_motorcycles + total_drugs_seized
         
         # Return both the current report and the accumulated totals
         return jsonify({
