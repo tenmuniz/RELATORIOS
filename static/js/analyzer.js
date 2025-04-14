@@ -190,6 +190,10 @@ function displayResults(results, totals) {
     document.getElementById('drugsSeizedValue').textContent = results.drugsSeized || 0;
   }
   
+  if (document.getElementById('fugitivesValue')) {
+    document.getElementById('fugitivesValue').textContent = results.fugitives || 0;
+  }
+  
   // Update occurrence info
   document.getElementById('occurrenceValue').textContent = results.occurrence;
   

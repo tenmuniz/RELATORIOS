@@ -202,6 +202,18 @@ def analyze():
                         arrests_count = 1
                         break
         
+        # Verificar se tem foragidos
+        fugitives_count = 0
+        fugitive_keywords = ['FORAGIDO', 'EVADIDO', 'MANDADO DE PRISÃO']
+        for keyword in fugitive_keywords:
+            if keyword in normalized_text:
+                fugitives_count = 1
+                
+                # Se for foragido, também contabiliza como prisão
+                if arrests_count == 0:
+                    arrests_count = 1
+                break
+                
         # Create new report
         new_report = Report(
             location=location,
@@ -214,6 +226,7 @@ def analyze():
             arrests_count=arrests_count,
             seized_motorcycles_count=seized_motorcycles_count,
             drugs_seized_count=drugs_seized_count,
+            fugitives_count=fugitives_count,
             occurrence=occurrence
         )
         
@@ -230,8 +243,9 @@ def analyze():
         total_arrests = sum(report.arrests_count for report in reports)
         total_seized_motorcycles = sum(report.seized_motorcycles_count for report in reports)
         total_drugs_seized = sum(report.drugs_seized_count for report in reports)
+        total_fugitives = sum(report.fugitives_count for report in reports)
         # Total de inspeções deve incluir todos os itens contabilizados
-        total_inspections = total_people + total_motorcycles + total_cars + total_bicycles + total_arrests + total_seized_motorcycles + total_drugs_seized
+        total_inspections = total_people + total_motorcycles + total_cars + total_bicycles + total_arrests + total_seized_motorcycles + total_drugs_seized + total_fugitives
         
         # Return both the current report and the accumulated totals
         return jsonify({
@@ -245,6 +259,7 @@ def analyze():
                 "arrests": total_arrests,
                 "seizedMotorcycles": total_seized_motorcycles,
                 "drugsSeized": total_drugs_seized,
+                "fugitives": total_fugitives,
                 "totalInspections": total_inspections,
                 "reportsCount": len(reports)
             }
