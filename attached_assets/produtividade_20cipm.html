@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Produtividade 20ª CIPM</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #001f3f, #0074D9);
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #003366;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-bottom: 4px solid #FFDC00;
+    }
+    .container {
+      padding: 30px;
+      max-width: 900px;
+      margin: auto;
+    }
+    textarea {
+      width: 100%;
+      height: 250px;
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 0 10px #000;
+      margin-bottom: 20px;
+      resize: vertical;
+    }
+    button {
+      background-color: #FF4136;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 10px #000;
+    }
+    button:hover {
+      background-color: #FF851B;
+    }
+    .output {
+      margin-top: 30px;
+      background-color: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
+    }
+    h2 {
+      color: #FFDC00;
+    }
+    .label {
+      font-weight: bold;
+      color: #7FDBFF;
+    }
+  </style>
+</head>
+<body>
+  <header>Produtividade 20ª CIPM - Análise Inteligente</header>
+  <div class="container">
+    <textarea id="inputText" placeholder="Cole aqui o texto do relatório..."></textarea>
+    <button onclick="extrair()">Extrair Dados</button>
+    <div class="output" id="outputArea">
+      <h2>Dados extraídos:</h2>
+      <p><span class="label">Local:</span> <span id="local"></span></p>
+      <p><span class="label">Data:</span> <span id="data"></span></p>
+      <p><span class="label">Turno:</span> <span id="turno"></span></p>
+      <p><span class="label">Pessoas a pé:</span> <span id="pessoas"></span></p>
+      <p><span class="label">Motos:</span> <span id="motos"></span></p>
+      <p><span class="label">Carros:</span> <span id="carros"></span></p>
+      <p><span class="label">Bicicletas:</span> <span id="bicicletas"></span></p>
+      <p><span class="label">Ocorrência:</span> <span id="ocorrencia"></span></p>
+    </div>
+  </div>
+
+  <script>
+    function extrair() {
+      const texto = document.getElementById('inputText').value;
+
+      const local = texto.includes("MUANÁ") ? "MUANÁ" : texto.includes("PONTA DE PEDRAS") ? "PONTA DE PEDRAS" : "NÃO IDENTIFICADO";
+      const dataMatch = texto.match(/\d{2}\/\d{2}\/\d{4}/g);
+      const pessoas = texto.match(/PESSOAS A PÉ\s*:\s*(\d+)/i);
+      const motos = texto.match(/MOTOS\s*:\s*(\d+)/i);
+      const carros = texto.match(/CARRO\s*:\s*(\d+)/i);
+      const bicicletas = texto.match(/BICICLETAS\s*:\s*(\d+)/i);
+      const ocorrenciaMatch = texto.match(/OCORRÊNCIA[^:]*:\s*(.+)/i);
+
+      document.getElementById('local').innerText = local;
+      document.getElementById('data').innerText = dataMatch ? dataMatch[0] : "Não encontrada";
+      document.getElementById('turno').innerText = texto.includes("07:30 às 19:30") ? "Diurno" : texto.includes("19:30 às 07:30") ? "Noturno" : "Não identificado";
+      document.getElementById('pessoas').innerText = pessoas ? pessoas[1] : "0";
+      document.getElementById('motos').innerText = motos ? motos[1] : "0";
+      document.getElementById('carros').innerText = carros ? carros[1] : "0";
+      document.getElementById('bicicletas').innerText = bicicletas ? bicicletas[1] : "0";
+      document.getElementById('ocorrencia').innerText = ocorrenciaMatch ? ocorrenciaMatch[1].substring(0, 200) + "..." : "Sem ocorrência relevante";
+    }
+  </script>
+</body>
+</html>
