@@ -69,166 +69,204 @@ def analyze():
     This processes and stores the data in the database.
     """
     try:
-        report_text = request.json.get("text", "")
-        
-        # Basic validation
-        if not report_text:
-            return jsonify({"error": "O texto do relatório é obrigatório"}), 400
+        if not request.is_json:
+            return jsonify({"error": "Request must be JSON"}), 400
             
-        # Extract data - using the same logic as in the JS file
+        data = request.get_json()
+        if 'text' not in data:
+            return jsonify({"error": "No text provided for analysis"}), 400
+            
+        report_text = data['text']
         # Normalize text
         normalized_text = report_text.upper()
         
-        # Extract location
-        location = "NÃO IDENTIFICADO"
-        if "MUANÁ" in normalized_text:
-            location = "MUANÁ"
-        elif "PONTA DE PEDRAS" in normalized_text:
-            location = "PONTA DE PEDRAS"
+        # Variável para indicar se usamos IA ou não
+        using_ai_analysis = False
         
-        # Extract date
-        date_match = re.findall(r'\d{2}/\d{2}/\d{4}', report_text)
-        date = date_match[0] if date_match else None
-        
-        # Extract shift
-        shift = "Não identificado"
-        if "07:30" in normalized_text and "19:30" in normalized_text:
-            shift = "Diurno (07:30 às 19:30)"
-        elif "19:30" in normalized_text and "07:30" in normalized_text:
-            shift = "Noturno (19:30 às 07:30)"
-        
-        # Extract inspection counts
-        people_match = re.search(r'PESSOAS A PÉ\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
-        motorcycles_match = re.search(r'MOTOS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
-        cars_match = re.search(r'CARRO[S]*\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
-        bicycles_match = re.search(r'BICICLETAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
-        
-        # Extract occurrence
-        occurrence_match = re.search(r'OCORRÊNCIA[^:]*:\s*(.+?)(?=\n|$)', normalized_text, re.IGNORECASE)
-        occurrence = occurrence_match[1].strip() if occurrence_match else "Sem ocorrência relevante"
-        
-        # Extrair dados de prisões, apreensões de motos e apreensões de drogas
-        arrests_match = re.search(r'PRIS[ÕO]ES\s*:\s*(\d+)', normalized_text, re.IGNORECASE) or \
-                        re.search(r'PRESOS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
-                        
-        seized_motorcycles_match = re.search(r'MOTOS\s*APREENDIDAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE) or \
-                                   re.search(r'APREENS[ÃA]O\s*DE\s*MOTOS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
-                                   
-        drugs_match = re.search(r'DROGAS\s*APREENDIDAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE) or \
-                      re.search(r'APREENS[ÃA]O\s*DE\s*DROGAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
-        
-        # Verificar texto da ocorrência para inferir valores não explícitos
-        arrests_count = int(arrests_match[1]) if arrests_match else 0
-        seized_motorcycles_count = int(seized_motorcycles_match[1]) if seized_motorcycles_match else 0
-        drugs_seized_count = int(drugs_match[1]) if drugs_match else 0
-        
-        # Se não encontrado explicitamente, tenta inferir do texto da ocorrência
-        if arrests_count == 0:
-            has_arrest_keywords = (
-                'PRISÃO' in normalized_text or 
-                'PRESO' in normalized_text or 
-                'APRESENTAÇÃO NA DELEGACIA' in normalized_text or 
-                'APRESENTADO NA DELEGACIA' in normalized_text
+        # Tentar usar a análise por IA primeiro
+        try:
+            from ai_analyzer import analyze_police_report
+            logging.info("Attempting to use AI analysis...")
+            
+            # Obter resultados da análise por IA
+            ai_results = analyze_police_report(report_text)
+            
+            # Criar relatório com os dados analisados pela IA
+            new_report = Report(
+                location=ai_results.get('location', 'NÃO IDENTIFICADO'),
+                date=ai_results.get('date', ''),
+                shift=ai_results.get('shift', 'Não identificado'),
+                people_count=ai_results.get('people_count', 0),
+                motorcycles_count=ai_results.get('motorcycles_count', 0),
+                cars_count=ai_results.get('cars_count', 0),
+                bicycles_count=ai_results.get('bicycles_count', 0),
+                arrests_count=ai_results.get('arrests_count', 0),
+                seized_motorcycles_count=ai_results.get('seized_motorcycles_count', 0),
+                drugs_seized_count=ai_results.get('drugs_seized_count', 0),
+                fugitives_count=ai_results.get('fugitives_count', 0),
+                occurrence=ai_results.get('occurrence', 'Sem ocorrência relevante')
             )
             
-            # Verificação adicional para nomes próprios após menção de apresentação na delegacia
-            has_presentation_with_name = False
-            presentation_phrases = [
-                'APRESENTAÇÃO NA DELEGACIA', 
-                'APRESENTADO NA DELEGACIA',
-                'CONDUZIDO À DELEGACIA',
-                'CONDUZIDO PARA DELEGACIA',
-                'CONDUZINDO O MESMO ATÉ A DELEGACIA',
-                'CONDUZINDO A DELEGACIA',
-                'CONDUZINDO PARA A DELEGACIA',
-                'CONDUZINDO O',
-                'CONDUZINDO A',
-                'ENCAMINHADO À DELEGACIA',
-                'DETENÇÃO',
-                'DELEGACIA DE POLÍCIA'
-            ]
+            using_ai_analysis = True
+            logging.info(f"Successfully created report from AI analysis")
             
-            for phrase in presentation_phrases:
-                if phrase in normalized_text:
-                    # Procurar por provável nome próprio após a frase
-                    pos = normalized_text.find(phrase) + len(phrase)
-                    next_text = normalized_text[pos:pos+150]  # Olhar os próximos 150 caracteres
-                    
-                    # Padrões comuns para nomes: palavras capitalizadas consecutivas ou com DE, DA, DOS entre elas
-                    # ou após "NOME:" ou "NACIONAL:"
-                    name_patterns = [
-                        r'NOME\s*:\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
-                        r'NACIONAL\s*:\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
-                        r'SR\s*\.?\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
-                        r'SRA\s*\.?\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
-                        r'INDIVÍDUO\s+([A-Z]+\s+(?:[A-Z]+\s+)+)',
-                        r'CIDADÃO\s+([A-Z]+\s+(?:[A-Z]+\s+)+)',
-                        r'SUSPEITO\s+([A-Z]+\s+(?:[A-Z]+\s+)+)',
-                        r'([A-Z]+\s+(?:D[AEOI]S?\s+)?[A-Z]+\s+(?:D[AEOI]S?\s+)?[A-Z]+)'
-                    ]
-                    
-                    for pattern in name_patterns:
-                        name_match = re.search(pattern, next_text)
-                        if name_match:
-                            has_presentation_with_name = True
-                            break
-                    
-                    if has_presentation_with_name:
-                        break
-            
-            if has_arrest_keywords or has_presentation_with_name:
-                arrests_count = 1  # Assume pelo menos uma prisão
-            
-        if seized_motorcycles_count == 0 and 'MOTO APREENDIDA' in normalized_text:
-            seized_motorcycles_count = 1  # Assume pelo menos uma moto apreendida se mencionado
-            
-        if drugs_seized_count == 0 and ('DROGA' in normalized_text or 'ENTORPECENTE' in normalized_text):
-            drugs_seized_count = 1  # Assume pelo menos uma apreensão se mencionado
-            
-        # Verificação adicional para contabilizar prisão quando há texto longo
-        # com palavras-chave que indicam prisão
-        if arrests_count == 0 and len(occurrence) > 50:
-            arrest_indicators = [
-                'DETENÇÃO', 'FAZENDO SUA DETENÇÃO', 
-                'PRESO EM FLAGRANTE', 'DELEGACIA DE POLÍCIA', 
-                'CONDUZINDO', 'CONDUZIDO', 'DETIDO'
-            ]
-            
-            for indicator in arrest_indicators:
-                if indicator in normalized_text:
-                    # Verificar se há pelo menos um nome próprio (palavras maiúsculas entre asteriscos)
-                    name_pattern = r'\*[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+\s+[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+\s+[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+\*'
-                    if re.search(name_pattern, normalized_text):
-                        arrests_count = 1
-                        break
+        except Exception as ai_error:
+            logging.error(f"Error using AI analysis, falling back to regex: {str(ai_error)}")
+            using_ai_analysis = False
         
-        # Verificar se tem foragidos
-        fugitives_count = 0
-        fugitive_keywords = ['FORAGIDO', 'EVADIDO', 'MANDADO DE PRISÃO']
-        for keyword in fugitive_keywords:
-            if keyword in normalized_text:
-                fugitives_count = 1
+        # Se não conseguimos usar IA, usamos a análise por regex
+        if not using_ai_analysis:
+            logging.info("Using regex-based analysis...")
+            # Extract location
+            location = "NÃO IDENTIFICADO"
+            if "MUANÁ" in normalized_text:
+                location = "MUANÁ"
+            elif "PONTA DE PEDRAS" in normalized_text:
+                location = "PONTA DE PEDRAS"
+            
+            # Extract date
+            date_match = re.findall(r'\d{2}/\d{2}/\d{4}', report_text)
+            date = date_match[0] if date_match else None
+            
+            # Extract shift
+            shift = "Não identificado"
+            if "07:30" in normalized_text and "19:30" in normalized_text:
+                shift = "Diurno (07:30 às 19:30)"
+            elif "19:30" in normalized_text and "07:30" in normalized_text:
+                shift = "Noturno (19:30 às 07:30)"
+            
+            # Extract inspection counts
+            people_match = re.search(r'PESSOAS A PÉ\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+            motorcycles_match = re.search(r'MOTOS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+            cars_match = re.search(r'CARRO[S]*\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+            bicycles_match = re.search(r'BICICLETAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+            
+            # Extract occurrence
+            occurrence_match = re.search(r'OCORRÊNCIA[^:]*:\s*(.+?)(?=\n|$)', normalized_text, re.IGNORECASE)
+            occurrence = occurrence_match[1].strip() if occurrence_match else "Sem ocorrência relevante"
+            
+            # Extrair dados de prisões, apreensões de motos e apreensões de drogas
+            arrests_match = re.search(r'PRIS[ÕO]ES\s*:\s*(\d+)', normalized_text, re.IGNORECASE) or \
+                            re.search(r'PRESOS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+                            
+            seized_motorcycles_match = re.search(r'MOTOS\s*APREENDIDAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE) or \
+                                      re.search(r'APREENS[ÃA]O\s*DE\s*MOTOS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+                                      
+            drugs_match = re.search(r'DROGAS\s*APREENDIDAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE) or \
+                          re.search(r'APREENS[ÃA]O\s*DE\s*DROGAS\s*:\s*(\d+)', normalized_text, re.IGNORECASE)
+            
+            # Verificar texto da ocorrência para inferir valores não explícitos
+            arrests_count = int(arrests_match[1]) if arrests_match else 0
+            seized_motorcycles_count = int(seized_motorcycles_match[1]) if seized_motorcycles_match else 0
+            drugs_seized_count = int(drugs_match[1]) if drugs_match else 0
+            
+            # Se não encontrado explicitamente, tenta inferir do texto da ocorrência
+            if arrests_count == 0:
+                has_arrest_keywords = (
+                    'PRISÃO' in normalized_text or 
+                    'PRESO' in normalized_text or 
+                    'APRESENTAÇÃO NA DELEGACIA' in normalized_text or 
+                    'APRESENTADO NA DELEGACIA' in normalized_text
+                )
                 
-                # Se for foragido, também contabiliza como prisão
-                if arrests_count == 0:
-                    arrests_count = 1
-                break
+                # Verificação adicional para nomes próprios após menção de apresentação na delegacia
+                has_presentation_with_name = False
+                presentation_phrases = [
+                    'APRESENTAÇÃO NA DELEGACIA', 
+                    'APRESENTADO NA DELEGACIA',
+                    'CONDUZIDO À DELEGACIA',
+                    'CONDUZIDO PARA DELEGACIA',
+                    'CONDUZINDO O MESMO ATÉ A DELEGACIA',
+                    'CONDUZINDO A DELEGACIA',
+                    'CONDUZINDO PARA A DELEGACIA',
+                    'CONDUZINDO O',
+                    'CONDUZINDO A',
+                    'ENCAMINHADO À DELEGACIA',
+                    'DETENÇÃO',
+                    'DELEGACIA DE POLÍCIA'
+                ]
                 
-        # Create new report
-        new_report = Report(
-            location=location,
-            date=date,
-            shift=shift,
-            people_count=int(people_match[1]) if people_match else 0,
-            motorcycles_count=int(motorcycles_match[1]) if motorcycles_match else 0,
-            cars_count=int(cars_match[1]) if cars_match else 0,
-            bicycles_count=int(bicycles_match[1]) if bicycles_match else 0,
-            arrests_count=arrests_count,
-            seized_motorcycles_count=seized_motorcycles_count,
-            drugs_seized_count=drugs_seized_count,
-            fugitives_count=fugitives_count,
-            occurrence=occurrence
-        )
+                for phrase in presentation_phrases:
+                    if phrase in normalized_text:
+                        # Procurar por provável nome próprio após a frase
+                        pos = normalized_text.find(phrase) + len(phrase)
+                        next_text = normalized_text[pos:pos+150]  # Olhar os próximos 150 caracteres
+                        
+                        # Padrões comuns para nomes: palavras capitalizadas consecutivas ou com DE, DA, DOS entre elas
+                        # ou após "NOME:" ou "NACIONAL:"
+                        name_patterns = [
+                            r'NOME\s*:\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                            r'NACIONAL\s*:\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                            r'SR\s*\.?\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                            r'SRA\s*\.?\s*([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                            r'INDIVÍDUO\s+([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                            r'CIDADÃO\s+([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                            r'SUSPEITO\s+([A-Z]+\s+(?:[A-Z]+\s+)+)',
+                            r'([A-Z]+\s+(?:D[AEOI]S?\s+)?[A-Z]+\s+(?:D[AEOI]S?\s+)?[A-Z]+)'
+                        ]
+                        
+                        for pattern in name_patterns:
+                            name_match = re.search(pattern, next_text)
+                            if name_match:
+                                has_presentation_with_name = True
+                                break
+                        
+                        if has_presentation_with_name:
+                            break
+                
+                if has_arrest_keywords or has_presentation_with_name:
+                    arrests_count = 1  # Assume pelo menos uma prisão
+                
+            if seized_motorcycles_count == 0 and 'MOTO APREENDIDA' in normalized_text:
+                seized_motorcycles_count = 1  # Assume pelo menos uma moto apreendida se mencionado
+                
+            if drugs_seized_count == 0 and ('DROGA' in normalized_text or 'ENTORPECENTE' in normalized_text):
+                drugs_seized_count = 1  # Assume pelo menos uma apreensão se mencionado
+                
+            # Verificação adicional para contabilizar prisão quando há texto longo
+            # com palavras-chave que indicam prisão
+            if arrests_count == 0 and len(occurrence) > 50:
+                arrest_indicators = [
+                    'DETENÇÃO', 'FAZENDO SUA DETENÇÃO', 
+                    'PRESO EM FLAGRANTE', 'DELEGACIA DE POLÍCIA', 
+                    'CONDUZINDO', 'CONDUZIDO', 'DETIDO'
+                ]
+                
+                for indicator in arrest_indicators:
+                    if indicator in normalized_text:
+                        # Verificar se há pelo menos um nome próprio (palavras maiúsculas entre asteriscos)
+                        name_pattern = r'\*[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+\s+[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+\s+[A-ZÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+\*'
+                        if re.search(name_pattern, normalized_text):
+                            arrests_count = 1
+                            break
+            
+            # Verificar se tem foragidos
+            fugitives_count = 0
+            fugitive_keywords = ['FORAGIDO', 'EVADIDO', 'MANDADO DE PRISÃO']
+            for keyword in fugitive_keywords:
+                if keyword in normalized_text:
+                    fugitives_count = 1
+                    
+                    # Se for foragido, também contabiliza como prisão
+                    if arrests_count == 0:
+                        arrests_count = 1
+                    break
+                    
+            # Create new report
+            new_report = Report(
+                location=location,
+                date=date,
+                shift=shift,
+                people_count=int(people_match[1]) if people_match else 0,
+                motorcycles_count=int(motorcycles_match[1]) if motorcycles_match else 0,
+                cars_count=int(cars_match[1]) if cars_match else 0,
+                bicycles_count=int(bicycles_match[1]) if bicycles_match else 0,
+                arrests_count=arrests_count,
+                seized_motorcycles_count=seized_motorcycles_count,
+                drugs_seized_count=drugs_seized_count,
+                fugitives_count=fugitives_count,
+                occurrence=occurrence
+            )
         
         # Save to database
         db.session.add(new_report)
