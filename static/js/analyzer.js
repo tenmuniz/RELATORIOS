@@ -205,11 +205,10 @@ function showError(message) {
 }
 
 /**
- * Clear the form and results
+ * Clear only the input form without hiding results
  */
 function clearForm() {
   document.getElementById('reportText').value = '';
-  document.getElementById('resultsSection').classList.remove('show');
   document.getElementById('errorMessage').style.display = 'none';
 }
 
