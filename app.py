@@ -58,6 +58,9 @@ def reset_database():
                 "arrests": 0,
                 "seizedMotorcycles": 0,
                 "drugsSeized": 0,
+                "fugitives": 0,
+                "bladedWeapons": 0,
+                "firearms": 0,
                 "totalInspections": 0,
                 "reportsCount": 0
             }
@@ -283,6 +286,8 @@ def analyze():
                     seized_motorcycles_count=seized_motorcycles_count,
                     drugs_seized_count=drugs_seized_count,
                     fugitives_count=fugitives_count,
+                    bladed_weapons_count=bladed_weapons_count,
+                    firearms_count=firearms_count,
                     occurrence=occurrence
                 )
             
@@ -300,8 +305,12 @@ def analyze():
         total_seized_motorcycles = sum(report.seized_motorcycles_count for report in reports)
         total_drugs_seized = sum(report.drugs_seized_count for report in reports)
         total_fugitives = sum(report.fugitives_count for report in reports)
+        total_bladed_weapons = sum(report.bladed_weapons_count for report in reports)
+        total_firearms = sum(report.firearms_count for report in reports)
         # Total de inspeções deve incluir todos os itens contabilizados
-        total_inspections = total_people + total_motorcycles + total_cars + total_bicycles + total_arrests + total_seized_motorcycles + total_drugs_seized + total_fugitives
+        total_inspections = (total_people + total_motorcycles + total_cars + total_bicycles + 
+                            total_arrests + total_seized_motorcycles + total_drugs_seized + 
+                            total_fugitives + total_bladed_weapons + total_firearms)
         
         # Return response based on request type
         response_data = {
@@ -315,6 +324,8 @@ def analyze():
                 "seizedMotorcycles": total_seized_motorcycles,
                 "drugsSeized": total_drugs_seized,
                 "fugitives": total_fugitives,
+                "bladedWeapons": total_bladed_weapons,
+                "firearms": total_firearms,
                 "totalInspections": total_inspections,
                 "reportsCount": len(reports)
             }
