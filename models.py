@@ -28,11 +28,10 @@ class Report(db.Model):
 
     @property
     def total_inspections(self):
-        """Calculate total inspections"""
-        # Não incluir drugs_seized_count porque agora é em gramas, não em quantidade de ocorrências
-        return (self.people_count + self.motorcycles_count + self.cars_count + self.bicycles_count + 
-                self.arrests_count + self.seized_motorcycles_count + self.fugitives_count +
-                self.bladed_weapons_count + self.firearms_count)
+        """Calculate total inspections (apenas pessoas e veículos abordados)"""
+        # Somente contar pessoas e veículos abordados, conforme solicitação do usuário
+        # Não incluir prisões, apreensões, armas ou drogas no total
+        return (self.people_count + self.motorcycles_count + self.cars_count + self.bicycles_count)
         
     def to_dict(self):
         """Convert report to dictionary"""

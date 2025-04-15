@@ -164,7 +164,7 @@ function extractDataFromReport(text) {
     }
   }
   
-  // Calculate total inspections
+  // Calculate counts
   const peopleCount = peopleMatch ? parseInt(peopleMatch[1]) : 0;
   const motorcyclesCount = motorcyclesMatch ? parseInt(motorcyclesMatch[1]) : 0;
   const carsCount = carsMatch ? parseInt(carsMatch[1]) : 0;
@@ -174,6 +174,8 @@ function extractDataFromReport(text) {
   const bladedWeaponsCount = bladedWeaponsMatch ? parseInt(bladedWeaponsMatch[1]) : 0;
   const firearmsCount = firearmsMatch ? parseInt(firearmsMatch[1]) : 0;
   
+  // Total de inspeções: somar apenas pessoas e veículos abordados
+  // Não incluir prisões, apreensões, armas ou drogas no total
   const totalInspections = peopleCount + motorcyclesCount + carsCount + bicyclesCount;
   
   return {
