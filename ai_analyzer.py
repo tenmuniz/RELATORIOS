@@ -1,5 +1,5 @@
 """
-Módulo para análise de texto usando OpenAI GPT-4o
+Módulo para análise de texto usando OpenAI GPT-3.5 Turbo
 """
 import os
 import json
@@ -65,10 +65,9 @@ def analyze_police_report(report_text):
         """
         
         # Chamada para a API da OpenAI
-        # o modelo mais recente OpenAI é "gpt-4o" que foi lançado em 13 de maio de 2024.
-        # não altere isso a menos que seja explicitamente solicitado pelo usuário
+        # Usando o modelo GPT-3.5 Turbo conforme solicitado pelo usuário
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": report_text}
