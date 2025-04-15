@@ -411,14 +411,17 @@
             currentMonth = month - 1; // Ajustar para índice baseado em zero (0-11)
             currentYear = year;
             
+            // Garantir que estamos usando o primeiro dia do mês
+            const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth);
+            
             // Obter o último dia do mês
             const endDate = getLastDayOfMonth(currentYear, currentMonth);
             
             // Calcular quantos dias há no mês
-            const daysInMonth = getDaysInRange(startDate, endDate);
+            const daysInMonth = getDaysInRange(firstDayOfMonth, endDate);
             
             // Carregar o calendário para o mês inteiro
-            loadCalendar(startDate, endDate);
+            loadCalendar(firstDayOfMonth, endDate);
         }
         
         // Carregar o calendário

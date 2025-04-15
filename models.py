@@ -80,12 +80,19 @@ class Report(db.Model):
             dict: Calendar with status of each date/location/shift
         """
         if start_date is None:
-            # Default to starting 15 days ago
-            start_date = datetime.now() - timedelta(days=15)
+            # Default to the first day of current month
+            today = datetime.now()
+            start_date = datetime(today.year, today.month, 1)
         elif isinstance(start_date, str):
+            # Parse the string date
             start_date = cls.parse_date(start_date)
             if start_date is None:
-                start_date = datetime.now() - timedelta(days=15)
+                # Se falhar o parsing, usa primeiro dia do mês atual
+                today = datetime.now()
+                start_date = datetime(today.year, today.month, 1)
+            else:
+                # Se der certo o parsing, garantir que seja dia 1 do mês informado
+                start_date = datetime(start_date.year, start_date.month, 1)
         
         # Get all reports within date range
         all_reports = cls.query.all()
