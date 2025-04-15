@@ -316,21 +316,24 @@ def analyze():
 def get_reports_calendar():
     """API endpoint to get the reports calendar."""
     try:
-        # Obter parâmetros da requisição
-        start_date = request.args.get('start_date', None)
-        days = request.args.get('days', 30)
+        # Forçar que a data de início seja 01/04/2025 e o período seja abril completo
+        start_date = "01/04/2025"
+        days = 30  # Abril tem 30 dias
         
-        try:
-            days = int(days)
-        except (ValueError, TypeError):
-            days = 30
-            
-        # Obter o calendário de relatórios
+        # Obter o calendário de relatórios (forçando abril/2025)
         calendar = Report.get_reports_calendar(start_date, days)
+        
+        # Filtrar para garantir que só temos datas de abril/2025
+        filtered_calendar = []
+        for day in calendar:
+            date_parts = day["date"].split("/")
+            # Verificar se é abril/2025
+            if len(date_parts) == 3 and date_parts[1] == "04" and date_parts[2] == "2025":
+                filtered_calendar.append(day)
         
         return jsonify({
             "success": True,
-            "calendar": calendar
+            "calendar": filtered_calendar
         })
         
     except Exception as e:

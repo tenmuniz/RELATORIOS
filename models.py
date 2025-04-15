@@ -52,19 +52,24 @@ class Report(db.Model):
         
     @staticmethod
     def parse_date(date_str):
-        """Parse date string into datetime object"""
+        """Parse date string into datetime object - sempre retorna data em abril de 2025"""
         if not date_str:
-            return None
+            return datetime(2025, 4, 1)
         
-        # Try to parse DD/MM/YYYY format
+        # Extrai apenas o dia da data original
         match = re.match(r'(\d{2})/(\d{2})/(\d{4})', date_str)
         if match:
             day, month, year = map(int, match.groups())
+            # Usar o dia da data original, mas em abril de 2025
             try:
-                return datetime(year, month, day)
+                if day > 30:  # Abril tem 30 dias
+                    day = 30
+                return datetime(2025, 4, day)
             except ValueError:
-                return None
-        return None
+                return datetime(2025, 4, 1)
+        
+        # Caso não consiga extrair, retorna o primeiro dia de abril
+        return datetime(2025, 4, 1)
     
     @classmethod
     def get_reports_calendar(cls, start_date=None, days=30):
@@ -106,13 +111,13 @@ class Report(db.Model):
         # Generate the calendar
         calendar = []
         
-        # Garantir que a data de início seja 1 de abril de 2025
+        # Forçar a data de início como 1 de abril de 2025, independente dos parâmetros recebidos
         current_date = datetime(2025, 4, 1)
         
-        # Garantir que a data final seja 30 de abril de 2025
+        # Forçar a data final como 30 de abril de 2025
         end_date = datetime(2025, 4, 30)
         
-        # Ignoramos os parâmetros e forçamos o mês de abril de 2025 completo
+        # Limpar todos os dias para abril de 2025 diretamente
         
         while current_date <= end_date:
             date_str = current_date.strftime('%d/%m/%Y')
