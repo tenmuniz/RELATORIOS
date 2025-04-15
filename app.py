@@ -31,6 +31,11 @@ def index():
     """Render the main page."""
     return render_template("index.html")
 
+@app.route("/calendario")
+def calendar():
+    """Render the calendar page."""
+    return render_template("calendar.html")
+
 @app.route("/reset", methods=["POST"])
 def reset_database():
     """
@@ -296,6 +301,31 @@ def analyze():
     except Exception as e:
         logging.error(f"Error processing report: {str(e)}")
         return jsonify({"error": f"Ocorreu um erro ao processar o relatório: {str(e)}"}), 500
+
+@app.route("/api/calendar", methods=["GET"])
+def get_reports_calendar():
+    """API endpoint to get the reports calendar."""
+    try:
+        # Obter parâmetros da requisição
+        start_date = request.args.get('start_date', None)
+        days = request.args.get('days', 30)
+        
+        try:
+            days = int(days)
+        except (ValueError, TypeError):
+            days = 30
+            
+        # Obter o calendário de relatórios
+        calendar = Report.get_reports_calendar(start_date, days)
+        
+        return jsonify({
+            "success": True,
+            "calendar": calendar
+        })
+        
+    except Exception as e:
+        logging.error(f"Error getting reports calendar: {str(e)}")
+        return jsonify({"error": f"Ocorreu um erro ao obter o calendário de relatórios: {str(e)}"}), 500
 
 # Run the app
 if __name__ == "__main__":

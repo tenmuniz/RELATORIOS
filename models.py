@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
+import re
 
 db = SQLAlchemy()
 
@@ -48,3 +49,99 @@ class Report(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'totalInspections': self.total_inspections
         }
+        
+    @staticmethod
+    def parse_date(date_str):
+        """Parse date string into datetime object"""
+        if not date_str:
+            return None
+        
+        # Try to parse DD/MM/YYYY format
+        match = re.match(r'(\d{2})/(\d{2})/(\d{4})', date_str)
+        if match:
+            day, month, year = map(int, match.groups())
+            try:
+                return datetime(year, month, day)
+            except ValueError:
+                return None
+        return None
+    
+    @classmethod
+    def get_reports_calendar(cls, start_date=None, days=30):
+        """
+        Generate a calendar of reports showing which dates have reports
+        and which are missing for each location and shift.
+        
+        Args:
+            start_date: Starting date (datetime or string in DD/MM/YYYY format)
+            days: Number of days to check
+            
+        Returns:
+            dict: Calendar with status of each date/location/shift
+        """
+        if start_date is None:
+            # Default to starting 15 days ago
+            start_date = datetime.now() - timedelta(days=15)
+        elif isinstance(start_date, str):
+            start_date = cls.parse_date(start_date)
+            if start_date is None:
+                start_date = datetime.now() - timedelta(days=15)
+        
+        # Get all reports within date range
+        all_reports = cls.query.all()
+        
+        # Map for quick lookup
+        report_map = {}
+        for report in all_reports:
+            parsed_date = cls.parse_date(report.date)
+            if parsed_date:
+                key = f"{parsed_date.strftime('%d/%m/%Y')}_{report.location}_{report.shift}"
+                report_map[key] = report
+        
+        # Generate the calendar
+        calendar = []
+        current_date = start_date
+        end_date = start_date + timedelta(days=days)
+        
+        while current_date < end_date:
+            date_str = current_date.strftime('%d/%m/%Y')
+            
+            # Check status for each location and shift
+            locations = ["MUANÁ", "PONTA DE PEDRAS"]
+            shifts = ["Diurno (07:30 às 19:30)", "Noturno (19:30 às 07:30)"]
+            
+            date_entry = {
+                "date": date_str,
+                "reports": []
+            }
+            
+            for location in locations:
+                for shift in shifts:
+                    key = f"{date_str}_{location}_{shift}"
+                    
+                    # Check if we have a report that matches
+                    status = "missing"
+                    report_id = None
+                    
+                    # Try different shift name formats
+                    shift_alt = "Diurno" if "Diurno" in shift else "Noturno"
+                    key_alt = f"{date_str}_{location}_{shift_alt}"
+                    
+                    if key in report_map:
+                        status = "submitted"
+                        report_id = report_map[key].id
+                    elif key_alt in report_map:
+                        status = "submitted"
+                        report_id = report_map[key_alt].id
+                    
+                    date_entry["reports"].append({
+                        "location": location,
+                        "shift": shift,
+                        "status": status,
+                        "report_id": report_id
+                    })
+            
+            calendar.append(date_entry)
+            current_date += timedelta(days=1)
+        
+        return calendar
