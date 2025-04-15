@@ -199,6 +199,14 @@ function displayResults(results, totals) {
     document.getElementById('fugitivesValue').textContent = results.fugitives || 0;
   }
   
+  if (document.getElementById('bladedWeaponsValue')) {
+    document.getElementById('bladedWeaponsValue').textContent = results.bladedWeapons || 0;
+  }
+  
+  if (document.getElementById('firearmsValue')) {
+    document.getElementById('firearmsValue').textContent = results.firearms || 0;
+  }
+  
   // Update occurrence info
   document.getElementById('occurrenceValue').textContent = results.occurrence;
   
@@ -235,6 +243,14 @@ function displayResults(results, totals) {
     
     if (document.getElementById('totalFugitivesValue')) {
       document.getElementById('totalFugitivesValue').textContent = totals.fugitives || 0;
+    }
+    
+    if (document.getElementById('totalBladedWeaponsValue')) {
+      document.getElementById('totalBladedWeaponsValue').textContent = totals.bladedWeapons || 0;
+    }
+    
+    if (document.getElementById('totalFirearmsValue')) {
+      document.getElementById('totalFirearmsValue').textContent = totals.firearms || 0;
     }
   }
   
@@ -295,6 +311,14 @@ function loadTotals() {
       
       if (document.getElementById('totalFugitivesValue')) {
         document.getElementById('totalFugitivesValue').textContent = data.totals.fugitives || 0;
+      }
+      
+      if (document.getElementById('totalBladedWeaponsValue')) {
+        document.getElementById('totalBladedWeaponsValue').textContent = data.totals.bladedWeapons || 0;
+      }
+      
+      if (document.getElementById('totalFirearmsValue')) {
+        document.getElementById('totalFirearmsValue').textContent = data.totals.firearms || 0;
       }
       
       console.log('Totais carregados com sucesso:', data.totals);
@@ -409,6 +433,18 @@ function resetDatabase() {
         document.getElementById('totalDrugsSeizedValue').textContent = 0;
       }
       
+      if (document.getElementById('totalFugitivesValue')) {
+        document.getElementById('totalFugitivesValue').textContent = 0;
+      }
+      
+      if (document.getElementById('totalBladedWeaponsValue')) {
+        document.getElementById('totalBladedWeaponsValue').textContent = 0;
+      }
+      
+      if (document.getElementById('totalFirearmsValue')) {
+        document.getElementById('totalFirearmsValue').textContent = 0;
+      }
+      
       // Também zerar os valores do relatório atual
       document.getElementById('peopleValue').textContent = 0;
       document.getElementById('motorcyclesValue').textContent = 0;
@@ -430,6 +466,14 @@ function resetDatabase() {
       
       if (document.getElementById('fugitivesValue')) {
         document.getElementById('fugitivesValue').textContent = 0;
+      }
+      
+      if (document.getElementById('bladedWeaponsValue')) {
+        document.getElementById('bladedWeaponsValue').textContent = 0;
+      }
+      
+      if (document.getElementById('firearmsValue')) {
+        document.getElementById('firearmsValue').textContent = 0;
       }
       
       // Limpar texto do relatório e dados de localização/data
