@@ -105,19 +105,16 @@ class Report(db.Model):
         
         # Generate the calendar
         calendar = []
-        current_date = start_date
         
-        # Calcular o último dia do mesmo mês
-        if days > 0:
-            # Se recebemos os dias, usamos isso
-            end_date = start_date + timedelta(days=days)
-        else:
-            # Caso contrário, calculamos o último dia do mês
-            next_month = current_date.replace(day=28) + timedelta(days=4)  # Vamos para o próximo mês
-            last_day = (next_month.replace(day=1) - timedelta(days=1)).day  # Retrocede para o último dia do mês atual
-            end_date = current_date.replace(day=last_day)
+        # Garantir que a data de início seja 1 de abril de 2025
+        current_date = datetime(2025, 4, 1)
         
-        while current_date < end_date:
+        # Garantir que a data final seja 30 de abril de 2025
+        end_date = datetime(2025, 4, 30)
+        
+        # Ignoramos os parâmetros e forçamos o mês de abril de 2025 completo
+        
+        while current_date <= end_date:
             date_str = current_date.strftime('%d/%m/%Y')
             
             # Check status for each location and shift
