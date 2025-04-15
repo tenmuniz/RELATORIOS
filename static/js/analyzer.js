@@ -205,7 +205,9 @@ function displayResults(results, totals) {
   }
   
   if (document.getElementById('drugsSeizedValue')) {
-    document.getElementById('drugsSeizedValue').textContent = results.drugsSeized || 0;
+    // Formatar o valor de drogas para exibir em gramas com uma casa decimal
+    const drugsValue = results.drugsSeized || 0;
+    document.getElementById('drugsSeizedValue').textContent = drugsValue.toFixed(1);
   }
   
   if (document.getElementById('fugitivesValue')) {
@@ -251,7 +253,9 @@ function displayResults(results, totals) {
     }
     
     if (document.getElementById('totalDrugsSeizedValue')) {
-      document.getElementById('totalDrugsSeizedValue').textContent = totals.drugsSeized || 0;
+      // Formatar o valor de drogas para exibir em gramas com uma casa decimal
+      const drugsValue = totals.drugsSeized || 0;
+      document.getElementById('totalDrugsSeizedValue').textContent = drugsValue.toFixed(1);
     }
     
     if (document.getElementById('totalFugitivesValue')) {
@@ -319,7 +323,9 @@ function loadTotals() {
       }
       
       if (document.getElementById('totalDrugsSeizedValue')) {
-        document.getElementById('totalDrugsSeizedValue').textContent = data.totals.drugsSeized || 0;
+        // Formatar o valor de drogas para exibir em gramas com uma casa decimal
+        const drugsValue = data.totals.drugsSeized || 0;
+        document.getElementById('totalDrugsSeizedValue').textContent = drugsValue.toFixed(1);
       }
       
       if (document.getElementById('totalFugitivesValue')) {
@@ -443,7 +449,7 @@ function resetDatabase() {
       }
       
       if (document.getElementById('totalDrugsSeizedValue')) {
-        document.getElementById('totalDrugsSeizedValue').textContent = 0;
+        document.getElementById('totalDrugsSeizedValue').textContent = '0.0';
       }
       
       if (document.getElementById('totalFugitivesValue')) {
@@ -474,7 +480,7 @@ function resetDatabase() {
       }
       
       if (document.getElementById('drugsSeizedValue')) {
-        document.getElementById('drugsSeizedValue').textContent = 0;
+        document.getElementById('drugsSeizedValue').textContent = '0.0';
       }
       
       if (document.getElementById('fugitivesValue')) {
