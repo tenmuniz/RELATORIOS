@@ -83,9 +83,36 @@ def analyze():
         # Variável para indicar se usamos IA ou não
         using_ai_analysis = False
         
-        # Definindo para sempre usar a análise por regex (sem IA)
-        using_ai_analysis = False
-        logging.info("Using regex-based analysis only...")
+        # Tentar usar a análise por IA primeiro
+        try:
+            from ai_analyzer import analyze_police_report
+            logging.info("Attempting to use AI analysis...")
+            
+            # Obter resultados da análise por IA
+            ai_results = analyze_police_report(report_text)
+            
+            # Criar relatório com os dados analisados pela IA
+            new_report = Report(
+                location=ai_results.get('location', 'NÃO IDENTIFICADO'),
+                date=ai_results.get('date', ''),
+                shift=ai_results.get('shift', 'Não identificado'),
+                people_count=ai_results.get('people_count', 0),
+                motorcycles_count=ai_results.get('motorcycles_count', 0),
+                cars_count=ai_results.get('cars_count', 0),
+                bicycles_count=ai_results.get('bicycles_count', 0),
+                arrests_count=ai_results.get('arrests_count', 0),
+                seized_motorcycles_count=ai_results.get('seized_motorcycles_count', 0),
+                drugs_seized_count=ai_results.get('drugs_seized_count', 0),
+                fugitives_count=ai_results.get('fugitives_count', 0),
+                occurrence=ai_results.get('occurrence', 'Sem ocorrência relevante')
+            )
+            
+            using_ai_analysis = True
+            logging.info(f"Successfully created report from AI analysis")
+            
+        except Exception as ai_error:
+            logging.error(f"Error using AI analysis, falling back to regex: {str(ai_error)}")
+            using_ai_analysis = False
         
         # Se não conseguimos usar IA, usamos a análise por regex
         if not using_ai_analysis:

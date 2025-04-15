@@ -1,5 +1,5 @@
 """
-Módulo para análise de texto usando OpenAI GPT-3.5/4
+Módulo para análise de texto usando OpenAI GPT-4o
 """
 import os
 import json
@@ -7,7 +7,11 @@ import logging
 from openai import OpenAI
 
 # Configurar o cliente OpenAI
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+api_key = os.environ.get("OPENAI_API_KEY")
+if not api_key:
+    logging.error("OPENAI_API_KEY environment variable is not set")
+    
+client = OpenAI(api_key=api_key)
 
 def analyze_police_report(report_text):
     """
