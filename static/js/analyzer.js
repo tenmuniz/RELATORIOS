@@ -65,9 +65,15 @@ function analyzeReport() {
     return;
   }
   
+  // Fazer uma cópia do texto do relatório para análise
+  const reportTextCopy = reportText;
+  
+  // Limpar o texto do relatório imediatamente após validação
+  document.getElementById('reportText').value = '';
+  
   try {
     // First do a client-side extraction to quickly display some results
-    const results = extractDataFromReport(reportText);
+    const results = extractDataFromReport(reportTextCopy);
     
     // Then send to server for processing and storage
     fetch('/analyze', {
