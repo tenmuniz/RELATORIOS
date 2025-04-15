@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <!-- Base Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Calendar Specific Styles -->
@@ -21,13 +23,13 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h1 class="logo-text">
-                        <i class="fas fa-shield-alt logo-icon"></i>
+                    <h1 class="logo-text animate__animated animate__fadeInLeft">
+                        <i class="fas fa-calendar-check logo-icon"></i>
                         20ª CIPM - Controle de Relatórios
                     </h1>
                 </div>
                 <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                    <a href="/" class="btn btn-primary-custom">
+                    <a href="/" class="btn btn-primary-custom animate__animated animate__fadeInRight">
                         <i class="fas fa-home me-2"></i>Página Inicial
                     </a>
                 </div>
@@ -37,19 +39,61 @@
 
     <!-- Main Content -->
     <main class="container">
-        <div class="calendar-container">
+        <div class="calendar-container animate__animated animate__fadeIn">
             <!-- Title Section -->
             <div class="mb-4">
                 <h2 class="calendar-title">Calendário de Produtividade</h2>
                 <p class="calendar-subtitle">Monitore os relatórios enviados e pendentes para cada dia, local e turno</p>
             </div>
 
+            <!-- Status Summary -->
+            <div class="status-summary mb-4">
+                <div class="row">
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <div class="status-card">
+                            <i class="fas fa-calendar-check status-icon text-primary"></i>
+                            <div class="status-info">
+                                <h3 class="status-value" id="totalDays">--</h3>
+                                <p class="status-label">Dias no Período</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <div class="status-card">
+                            <i class="fas fa-file-alt status-icon text-success"></i>
+                            <div class="status-info">
+                                <h3 class="status-value" id="submittedReports">--</h3>
+                                <p class="status-label">Relatórios Enviados</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <div class="status-card">
+                            <i class="fas fa-exclamation-triangle status-icon text-danger"></i>
+                            <div class="status-info">
+                                <h3 class="status-value" id="missingReports">--</h3>
+                                <p class="status-label">Relatórios Pendentes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="status-card">
+                            <i class="fas fa-chart-pie status-icon text-warning"></i>
+                            <div class="status-info">
+                                <h3 class="status-value" id="completionRate">--</h3>
+                                <p class="status-label">Taxa de Conclusão</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Navigation Bar -->
-            <div class="calendar-nav">
+            <div class="calendar-nav mb-4">
                 <div>
-                    <h3 class="mb-0 fs-5 text-white">
+                    <h3 class="mb-0 fs-5" id="currentPeriodText">
                         <i class="fas fa-clipboard-list me-2"></i>
-                        Relatórios Diários
+                        Relatórios: <span id="dateRangeDisplay">Carregando...</span>
                     </h3>
                 </div>
                 <div class="nav-buttons">
@@ -103,7 +147,11 @@
         // Variáveis globais
         let currentStartDate = null;
         const daysToShow = 30;
-
+        
+        // Contador de relatórios
+        let totalSubmitted = 0;
+        let totalMissing = 0;
+        
         // Formatar data para exibição em PT-BR
         function formatDateBR(dateString) {
             const [day, month, year] = dateString.split('/');
@@ -119,7 +167,8 @@
                 day: day,
                 month: monthNames[date.getMonth()],
                 year: year,
-                fullDate: `${day} de ${monthNames[date.getMonth()]} de ${year}`
+                fullDate: `${day} de ${monthNames[date.getMonth()]} de ${year}`,
+                shortMonth: monthNames[date.getMonth()].substring(0, 3)
             };
         }
 
@@ -132,6 +181,58 @@
             return inputDate.getDate() === today.getDate() && 
                    inputDate.getMonth() === today.getMonth() && 
                    inputDate.getFullYear() === today.getFullYear();
+        }
+        
+        // Formatar período de datas
+        function formatDateRange(startDate, endDate) {
+            if (!startDate || !endDate) return "Período atual";
+            
+            const start = formatDateBR(startDate);
+            const end = formatDateBR(endDate);
+            
+            if (start.month === end.month && start.year === end.year) {
+                return `${start.day} a ${end.day} de ${start.month} de ${start.year}`;
+            } else if (start.year === end.year) {
+                return `${start.day} ${start.shortMonth} - ${end.day} ${end.shortMonth} ${end.year}`;
+            } else {
+                return `${start.day}/${start.shortMonth}/${start.year} - ${end.day}/${end.shortMonth}/${end.year}`;
+            }
+        }
+        
+        // Atualizar contadores de status
+        function updateStatusCounters(calendarData) {
+            if (!calendarData || !calendarData.length) return;
+            
+            totalSubmitted = 0;
+            totalMissing = 0;
+            
+            // Contar relatórios enviados e pendentes
+            calendarData.forEach(day => {
+                day.reports.forEach(report => {
+                    if (report.status === 'submitted') {
+                        totalSubmitted++;
+                    } else {
+                        totalMissing++;
+                    }
+                });
+            });
+            
+            // Atualizar os contadores na UI
+            document.getElementById('totalDays').textContent = calendarData.length;
+            document.getElementById('submittedReports').textContent = totalSubmitted;
+            document.getElementById('missingReports').textContent = totalMissing;
+            
+            // Calcular a taxa de conclusão
+            const totalReports = totalSubmitted + totalMissing;
+            const completionRate = totalReports > 0 ? Math.round((totalSubmitted / totalReports) * 100) : 0;
+            document.getElementById('completionRate').textContent = `${completionRate}%`;
+            
+            // Atualizar o intervalo de datas
+            if (calendarData.length > 0) {
+                const firstDate = calendarData[0].date;
+                const lastDate = calendarData[calendarData.length - 1].date;
+                document.getElementById('dateRangeDisplay').textContent = formatDateRange(firstDate, lastDate);
+            }
         }
 
         // Renderizar o calendário
@@ -244,11 +345,27 @@
                 })
                 .then(data => {
                     if (data.success) {
+                        // Renderizar o calendário
                         renderCalendar(data.calendar);
+                        
                         // Atualizar data atual (primeira data do calendário)
                         if (data.calendar && data.calendar.length > 0) {
                             currentStartDate = data.calendar[0].date;
                         }
+                        
+                        // Atualizar contadores de status
+                        updateStatusCounters(data.calendar);
+                        
+                        // Adicionar animação aos cartões
+                        setTimeout(() => {
+                            const dayCards = document.querySelectorAll('.calendar-day');
+                            dayCards.forEach((card, index) => {
+                                setTimeout(() => {
+                                    card.style.opacity = "1";
+                                    card.style.transform = "translateY(0)";
+                                }, index * 100);
+                            });
+                        }, 200);
                     } else {
                         throw new Error(data.error || 'Erro desconhecido no servidor');
                     }
