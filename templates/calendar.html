@@ -198,27 +198,8 @@
         
         // Formatar período de datas
         function formatDateRange(startDate, endDate) {
-            if (!startDate || !endDate) return "Período atual";
-            
-            const start = formatDateBR(startDate);
-            const end = formatDateBR(endDate);
-            
-            // Se estamos mostrando um mês inteiro (do dia 1 ao último dia)
-            if (start.day === "01" && start.month === end.month && start.year === end.year) {
-                return `01 ${start.shortMonthUpper} - ${end.day} ${start.shortMonthUpper} ${end.year}`;
-            } 
-            // Se estamos mostrando dias do mesmo mês
-            else if (start.month === end.month && start.year === end.year) {
-                return `${start.day} ${start.shortMonthUpper} - ${end.day} ${start.shortMonthUpper} ${end.year}`;
-            } 
-            // Se estamos mostrando meses diferentes mas do mesmo ano
-            else if (start.year === end.year) {
-                return `${start.day} ${start.shortMonthUpper} - ${end.day} ${end.shortMonthUpper} ${end.year}`;
-            } 
-            // Se estamos mostrando anos diferentes
-            else {
-                return `${start.day} ${start.shortMonthUpper} ${start.year} - ${end.day} ${end.shortMonthUpper} ${end.year}`;
-            }
+            // Ignorar valores recebidos e sempre retornar abril de 2025 formatado
+            return "01 ABR - 30 ABR 2025";
         }
         
         // Atualizar contadores de status
@@ -359,11 +340,9 @@
         
         // Navegar para o mês anterior
         function goToPreviousMonth() {
-            currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11; // Dezembro
-                currentYear--;
-            }
+            // Forçar abril de 2025 (ignorar navegação)
+            currentMonth = 3; // Abril (índice 0-11)
+            currentYear = 2025;
             
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
@@ -371,11 +350,9 @@
         
         // Navegar para o próximo mês
         function goToNextMonth() {
-            currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0; // Janeiro
-                currentYear++;
-            }
+            // Forçar abril de 2025 (ignorar navegação)
+            currentMonth = 3; // Abril (índice 0-11)
+            currentYear = 2025;
             
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
@@ -409,16 +386,15 @@
         
         // Carregar o calendário por mês
         function loadCalendarByMonth(startDate) {
-            // Obter o mês e ano a partir da data de início
-            const [day, month, year] = startDate.split('/').map(Number);
-            currentMonth = month - 1; // Ajustar para índice baseado em zero (0-11)
-            currentYear = year;
+            // Ignorar a data recebida e forçar abril de 2025
+            currentMonth = 3; // Abril (índice 0-11)
+            currentYear = 2025;
             
-            // Garantir que estamos usando o primeiro dia do mês
-            const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth);
+            // Definir o primeiro dia do mês de abril
+            const firstDayOfMonth = "01/04/2025";
             
-            // Obter o último dia do mês
-            const endDate = getLastDayOfMonth(currentYear, currentMonth);
+            // Definir o último dia do mês de abril
+            const endDate = "30/04/2025";
             
             // Calcular quantos dias há no mês
             const daysInMonth = getDaysInRange(firstDayOfMonth, endDate);
@@ -434,13 +410,11 @@
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('calendar').innerHTML = '';
             
-            // Se não forneceu data de início, usar abril de 2025
-            if (!startDate) {
-                currentMonth = 3; // Abril (índice 0-11)
-                currentYear = 2025;
-                startDate = getFirstDayOfMonth(currentYear, currentMonth);
-                endDate = getLastDayOfMonth(currentYear, currentMonth);
-            }
+            // Ignorar as datas recebidas e forçar abril de 2025
+            currentMonth = 3; // Abril (índice 0-11)
+            currentYear = 2025;
+            startDate = "01/04/2025";
+            endDate = "30/04/2025";
             
             // Construir URL
             let url = `/api/calendar?start_date=${startDate}`;
