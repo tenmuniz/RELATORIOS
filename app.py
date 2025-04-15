@@ -341,6 +341,74 @@ def analyze():
         logging.error(f"Error processing report: {str(e)}")
         return jsonify({"error": f"Ocorreu um erro ao processar o relatório: {str(e)}"}), 500
 
+@app.route("/delete-last", methods=["POST"])
+def delete_last_report():
+    """
+    API endpoint para deletar o último relatório adicionado.
+    """
+    try:
+        # Buscar o último relatório pela data de criação (created_at)
+        last_report = Report.query.order_by(Report.created_at.desc()).first()
+        
+        if not last_report:
+            return jsonify({
+                "success": False,
+                "message": "Não há relatórios para excluir."
+            }), 404
+        
+        # Salvar informações do relatório para exibir
+        report_info = {
+            "local": last_report.location,
+            "data": last_report.date,
+            "turno": last_report.shift
+        }
+        
+        # Excluir o último relatório
+        db.session.delete(last_report)
+        db.session.commit()
+        
+        # Obter novos totais após a exclusão
+        reports = Report.query.all()
+        total_people = sum(report.people_count for report in reports)
+        total_motorcycles = sum(report.motorcycles_count for report in reports)
+        total_cars = sum(report.cars_count for report in reports)
+        total_bicycles = sum(report.bicycles_count for report in reports)
+        total_arrests = sum(report.arrests_count for report in reports)
+        total_seized_motorcycles = sum(report.seized_motorcycles_count for report in reports)
+        total_drugs_seized = sum(report.drugs_seized_count for report in reports)
+        total_fugitives = sum(report.fugitives_count for report in reports)
+        total_bladed_weapons = sum(report.bladed_weapons_count for report in reports)
+        total_firearms = sum(report.firearms_count for report in reports)
+        # Calcular o total de inspeções (apenas pessoas e veículos)
+        total_inspections = total_people + total_motorcycles + total_cars + total_bicycles
+        
+        return jsonify({
+            "success": True,
+            "message": f"Relatório excluído com sucesso: {report_info['local']} - {report_info['data']} ({report_info['turno']})",
+            "deleted_report": report_info,
+            "totals": {
+                "people": total_people,
+                "motorcycles": total_motorcycles,
+                "cars": total_cars,
+                "bicycles": total_bicycles,
+                "arrests": total_arrests,
+                "seizedMotorcycles": total_seized_motorcycles,
+                "drugsSeized": total_drugs_seized,
+                "fugitives": total_fugitives,
+                "bladedWeapons": total_bladed_weapons,
+                "firearms": total_firearms,
+                "totalInspections": total_inspections,
+                "reportsCount": len(reports)
+            }
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao excluir o último relatório: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": f"Ocorreu um erro ao excluir o último relatório: {str(e)}"
+        }), 500
+
 @app.route("/api/calendar", methods=["GET"])
 def get_reports_calendar():
     """API endpoint to get the reports calendar."""

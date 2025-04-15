@@ -433,7 +433,81 @@ function clearForm() {
   document.getElementById('errorMessage').style.display = 'none';
 }
 
-// Função de exportação removida conforme solicitado
+/**
+ * Excluir o último relatório enviado
+ */
+function deleteLastReport() {
+  if (confirm('Deseja realmente excluir o último relatório? Esta ação não pode ser desfeita.')) {
+    // Mostrar loader
+    document.getElementById('loader').style.display = 'block';
+    
+    fetch('/delete-last', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro ao excluir o último relatório');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Last report deleted:', data);
+      
+      // Ocultar loader
+      document.getElementById('loader').style.display = 'none';
+      
+      if (data.success) {
+        // Atualizar os totais com os novos valores após a exclusão
+        document.getElementById('totalPeopleValue').textContent = data.totals.people;
+        document.getElementById('totalMotorcyclesValue').textContent = data.totals.motorcycles;
+        document.getElementById('totalCarsValue').textContent = data.totals.cars;
+        document.getElementById('totalBicyclesValue').textContent = data.totals.bicycles;
+        document.getElementById('grandTotalValue').textContent = data.totals.totalInspections;
+        document.getElementById('reportsCountValue').textContent = data.totals.reportsCount;
+        
+        // Atualizar dados de prisões e apreensões
+        if (document.getElementById('totalArrestsValue')) {
+          document.getElementById('totalArrestsValue').textContent = data.totals.arrests;
+        }
+        
+        if (document.getElementById('totalSeizedMotorcyclesValue')) {
+          document.getElementById('totalSeizedMotorcyclesValue').textContent = data.totals.seizedMotorcycles;
+        }
+        
+        if (document.getElementById('totalDrugsSeizedValue')) {
+          const drugsValue = data.totals.drugsSeized || 0;
+          document.getElementById('totalDrugsSeizedValue').textContent = drugsValue.toFixed(1);
+        }
+        
+        if (document.getElementById('totalFugitivesValue')) {
+          document.getElementById('totalFugitivesValue').textContent = data.totals.fugitives;
+        }
+        
+        if (document.getElementById('totalBladedWeaponsValue')) {
+          document.getElementById('totalBladedWeaponsValue').textContent = data.totals.bladedWeapons;
+        }
+        
+        if (document.getElementById('totalFirearmsValue')) {
+          document.getElementById('totalFirearmsValue').textContent = data.totals.firearms;
+        }
+        
+        // Exibir mensagem de sucesso
+        alert(`${data.message}`);
+      } else {
+        // Se não houver sucesso, mostrar o motivo
+        alert(data.message || 'Não foi possível excluir o relatório');
+      }
+    })
+    .catch(error => {
+      console.error('Error deleting last report:', error);
+      document.getElementById('loader').style.display = 'none';
+      showError('Ocorreu um erro ao tentar excluir o último relatório: ' + error.message);
+    });
+  }
+}
 
 /**
  * Reset all database data
