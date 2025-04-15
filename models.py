@@ -20,6 +20,8 @@ class Report(db.Model):
     seized_motorcycles_count = db.Column(db.Integer, default=0)
     drugs_seized_count = db.Column(db.Integer, default=0)
     fugitives_count = db.Column(db.Integer, default=0)  # Contagem de foragidos capturados
+    bladed_weapons_count = db.Column(db.Integer, default=0)  # Contagem de armas brancas
+    firearms_count = db.Column(db.Integer, default=0)  # Contagem de armas de fogo
     
     occurrence = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -28,7 +30,8 @@ class Report(db.Model):
     def total_inspections(self):
         """Calculate total inspections"""
         return (self.people_count + self.motorcycles_count + self.cars_count + self.bicycles_count + 
-                self.arrests_count + self.seized_motorcycles_count + self.drugs_seized_count + self.fugitives_count)
+                self.arrests_count + self.seized_motorcycles_count + self.drugs_seized_count + self.fugitives_count +
+                self.bladed_weapons_count + self.firearms_count)
         
     def to_dict(self):
         """Convert report to dictionary"""
@@ -45,6 +48,8 @@ class Report(db.Model):
             'seizedMotorcycles': self.seized_motorcycles_count,
             'drugsSeized': self.drugs_seized_count,
             'fugitives': self.fugitives_count,
+            'bladedWeapons': self.bladed_weapons_count,  # Armas brancas
+            'firearms': self.firearms_count,  # Armas de fogo
             'occurrence': self.occurrence,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'totalInspections': self.total_inspections

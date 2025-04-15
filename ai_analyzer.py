@@ -40,11 +40,15 @@ def analyze_police_report(report_text):
            - Motocicletas apreendidas (número)
            - Drogas apreendidas (0 ou 1, se houve apreensão)
            - Foragidos capturados (número, também conta como prisão)
+           - Armas brancas apreendidas (número, inclui facas, facões, estiletes)
+           - Armas de fogo apreendidas (número, inclui revólveres, pistolas, espingardas)
         5. Resumo da ocorrência (texto curto)
         
         IMPORTANTE: 
         - Se houver menção a levar alguém à delegacia, conduzir à delegacia, ou "apresentação", conte como uma prisão.
         - Se houver menção a "foragido" ou "evadido", conte como captura de foragido.
+        - "Armas brancas" inclui facas, facões, canivetes, estiletes e objetos cortantes usados como arma.
+        - "Armas de fogo" inclui revólveres, pistolas, espingardas, rifles e similares.
         - Leia o contexto para entender se realmente houve prisão/apreensão.
         
         Responda APENAS em formato JSON, seguindo exatamente esta estrutura:
@@ -60,6 +64,8 @@ def analyze_police_report(report_text):
           "seized_motorcycles_count": int,
           "drugs_seized_count": int,
           "fugitives_count": int,
+          "bladed_weapons_count": int,
+          "firearms_count": int,
           "occurrence": "string"
         }
         """
