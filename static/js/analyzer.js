@@ -133,6 +133,12 @@ function extractDataFromReport(text) {
   const carsMatch = normalizedText.match(/CARRO[S]*\s*:\s*(\d+)/i);
   const bicyclesMatch = normalizedText.match(/BICICLETAS\s*:\s*(\d+)/i);
   
+  // Detectar armas brancas - procurar padrões como "X armas brancas", "X facas", "X facões"
+  const bladedWeaponsMatch = normalizedText.match(/(\d+)\s*(armas?\s*brancas?|facas?|facões?|canivetes?|punhais?)/i);
+  
+  // Detectar armas de fogo - procurar padrões como "X armas de fogo", "X pistolas", "X revólveres"
+  const firearmsMatch = normalizedText.match(/(\d+)\s*(armas?\s*de\s*fogo|pistolas?|revólveres?|espingardas?|fuzis?)/i);
+  
   // Extract occurrence
   const occurrenceMatch = normalizedText.match(/OCORRÊNCIA[^:]*:\s*(.+?)(?=\n|$)/i);
   let occurrence = 'Sem ocorrência relevante';
@@ -149,6 +155,11 @@ function extractDataFromReport(text) {
   const motorcyclesCount = motorcyclesMatch ? parseInt(motorcyclesMatch[1]) : 0;
   const carsCount = carsMatch ? parseInt(carsMatch[1]) : 0;
   const bicyclesCount = bicyclesMatch ? parseInt(bicyclesMatch[1]) : 0;
+  
+  // Contagem de armas
+  const bladedWeaponsCount = bladedWeaponsMatch ? parseInt(bladedWeaponsMatch[1]) : 0;
+  const firearmsCount = firearmsMatch ? parseInt(firearmsMatch[1]) : 0;
+  
   const totalInspections = peopleCount + motorcyclesCount + carsCount + bicyclesCount;
   
   return {
@@ -159,6 +170,8 @@ function extractDataFromReport(text) {
     motorcycles: motorcyclesCount,
     cars: carsCount,
     bicycles: bicyclesCount,
+    bladedWeapons: bladedWeaponsCount,
+    firearms: firearmsCount,
     totalInspections,
     occurrence
   };
