@@ -433,13 +433,7 @@ function clearForm() {
   document.getElementById('errorMessage').style.display = 'none';
 }
 
-/**
- * Export data to CSV (future enhancement)
- */
-function exportToCSV() {
-  // Implementation for a future enhancement
-  alert('Funcionalidade de exportação será implementada em breve!');
-}
+// Função de exportação removida conforme solicitado
 
 /**
  * Reset all database data
