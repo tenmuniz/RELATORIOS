@@ -18,7 +18,7 @@ class Report(db.Model):
     # Novos campos para contabilização adicional
     arrests_count = db.Column(db.Integer, default=0)
     seized_motorcycles_count = db.Column(db.Integer, default=0)
-    drugs_seized_count = db.Column(db.Integer, default=0)
+    drugs_seized_count = db.Column(db.Float, default=0.0)  # Quantidade de drogas em gramas
     fugitives_count = db.Column(db.Integer, default=0)  # Contagem de foragidos capturados
     bladed_weapons_count = db.Column(db.Integer, default=0)  # Contagem de armas brancas
     firearms_count = db.Column(db.Integer, default=0)  # Contagem de armas de fogo
@@ -29,8 +29,9 @@ class Report(db.Model):
     @property
     def total_inspections(self):
         """Calculate total inspections"""
+        # Não incluir drugs_seized_count porque agora é em gramas, não em quantidade de ocorrências
         return (self.people_count + self.motorcycles_count + self.cars_count + self.bicycles_count + 
-                self.arrests_count + self.seized_motorcycles_count + self.drugs_seized_count + self.fugitives_count +
+                self.arrests_count + self.seized_motorcycles_count + self.fugitives_count +
                 self.bladed_weapons_count + self.firearms_count)
         
     def to_dict(self):

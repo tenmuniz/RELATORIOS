@@ -38,7 +38,7 @@ def analyze_police_report(report_text):
            - Bicicletas abordadas (número)
            - Prisões realizadas (número, incluindo apresentações em delegacia)
            - Motocicletas apreendidas (número)
-           - Drogas apreendidas (0 ou 1, se houve apreensão)
+           - Drogas apreendidas (quantidade em gramas, se mencionado; caso só mencione a existência sem especificar quantidade, use 1.0)
            - Foragidos capturados (número, também conta como prisão)
            - Armas brancas apreendidas (número, inclui facas, facões, estiletes)
            - Armas de fogo apreendidas (número, inclui revólveres, pistolas, espingardas)
@@ -49,6 +49,10 @@ def analyze_police_report(report_text):
         - Se houver menção a "foragido" ou "evadido", conte como captura de foragido.
         - "Armas brancas" inclui facas, facões, canivetes, estiletes e objetos cortantes usados como arma.
         - "Armas de fogo" inclui revólveres, pistolas, espingardas, rifles e similares.
+        - Para drogas apreendidas, informe a quantidade em gramas. Procure no texto menções como "x gramas de maconha", 
+          "x gramas de cocaína", "x papelotes", "x embalagens", etc. Se houver múltiplos tipos de drogas, some as quantidades.
+          Se não for possível identificar a quantidade exata, mas houver apreensão, use 1.0.
+        - Se mencionar embalagens/papelotes sem especificar o peso, considere cada embalagem como 1 grama.
         - Leia o contexto para entender se realmente houve prisão/apreensão.
         
         Responda APENAS em formato JSON, seguindo exatamente esta estrutura:
@@ -62,7 +66,7 @@ def analyze_police_report(report_text):
           "bicycles_count": int,
           "arrests_count": int,
           "seized_motorcycles_count": int,
-          "drugs_seized_count": int,
+          "drugs_seized_count": float,
           "fugitives_count": int,
           "bladed_weapons_count": int,
           "firearms_count": int,
