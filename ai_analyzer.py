@@ -38,7 +38,7 @@ def analyze_police_report(report_text):
            - Bicicletas abordadas (número)
            - Prisões realizadas (número, incluindo apresentações em delegacia)
            - Motocicletas apreendidas (número)
-           - Drogas apreendidas (quantidade em gramas, se mencionado; caso só mencione a existência sem especificar quantidade, use 1.0)
+           - Drogas apreendidas (quantidade em gramas, APENAS se explicitamente mencionado no texto)
            - Foragidos capturados (número, também conta como prisão)
            - Armas brancas apreendidas (número, inclui facas, facões, estiletes)
            - Armas de fogo apreendidas (número, inclui revólveres, pistolas, espingardas)
@@ -46,13 +46,13 @@ def analyze_police_report(report_text):
         
         IMPORTANTE: 
         - Se houver menção a levar alguém à delegacia, conduzir à delegacia, ou "apresentação", conte como uma prisão.
-        - Se houver menção a "foragido" ou "evadido", conte como captura de foragido.
+        - Se houver menção a "foragido" ou "evadido", conte como captura de foragido APENAS se ficar claro que a pessoa foi capturada.
         - "Armas brancas" inclui facas, facões, canivetes, estiletes e objetos cortantes usados como arma.
         - "Armas de fogo" inclui revólveres, pistolas, espingardas, rifles e similares.
-        - Para drogas apreendidas, informe a quantidade em gramas. Procure no texto menções como "x gramas de maconha", 
-          "x gramas de cocaína", "x papelotes", "x embalagens", etc. Se houver múltiplos tipos de drogas, some as quantidades.
-          Se não for possível identificar a quantidade exata, mas houver apreensão, use 1.0.
-        - Se mencionar embalagens/papelotes sem especificar o peso, considere cada embalagem como 1 grama.
+        - Para drogas apreendidas, SOMENTE registre se houver EXPLÍCITA menção às palavras "droga", "entorpecente", "maconha", 
+          "cocaína", "crack", ou outras substâncias ilícitas. Procure no texto menções claras como "x gramas de maconha", "apreensão de entorpecentes".
+        - NÃO registre drogas se não houver menção clara e explícita a substâncias ilícitas no texto.
+        - Se não houver qualquer menção a drogas ou entorpecentes, o valor deve ser ZERO.
         - Leia o contexto para entender se realmente houve prisão/apreensão.
         
         Responda APENAS em formato JSON, seguindo exatamente esta estrutura:
