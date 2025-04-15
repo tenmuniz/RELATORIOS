@@ -12,6 +12,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // Verificar se estamos na página principal e carregar os totais acumulados
   if (window.location.pathname === '/' || window.location.pathname === '') {
     loadTotals();
+    
+    // Adicionar animação inicial aos elementos principais após a carga da página
+    setTimeout(() => {
+      // Animar os quadros de estatísticas principais de forma sequencial
+      const statValues = document.querySelectorAll('.stat-value');
+      statValues.forEach((element, index) => {
+        setTimeout(() => {
+          element.classList.add('updated');
+          setTimeout(() => {
+            element.classList.remove('updated');
+          }, 800);
+        }, index * 100); // Delay sequencial para cada elemento
+      });
+    }, 1000); // Atraso inicial para garantir que a página foi carregada
   }
 });
 
@@ -188,38 +202,52 @@ function displayResults(results, totals) {
   document.getElementById('dateValue').textContent = results.date;
   document.getElementById('shiftValue').textContent = results.shift;
   
-  // Update the stats boxes for current report
-  document.getElementById('peopleValue').textContent = results.people;
-  document.getElementById('motorcyclesValue').textContent = results.motorcycles;
-  document.getElementById('carsValue').textContent = results.cars;
-  document.getElementById('bicyclesValue').textContent = results.bicycles;
-  document.getElementById('totalValue').textContent = results.totalInspections;
+  // Função para atualizar valores com animação
+  function updateValueWithAnimation(elementId, value) {
+    const element = document.getElementById(elementId);
+    // Remover classe primeiro caso esteja de uma atualização anterior
+    element.classList.remove('updated');
+    
+    // Forçar reflow para reiniciar a animação
+    void element.offsetWidth;
+    
+    // Atualizar valor e adicionar classe para animar
+    element.textContent = value;
+    element.classList.add('updated');
+  }
+
+  // Update the stats boxes for current report with animation
+  updateValueWithAnimation('peopleValue', results.people);
+  updateValueWithAnimation('motorcyclesValue', results.motorcycles);
+  updateValueWithAnimation('carsValue', results.cars);
+  updateValueWithAnimation('bicyclesValue', results.bicycles);
+  updateValueWithAnimation('totalValue', results.totalInspections);
   
-  // Atualizar os novos campos adicionados no relatório atual
+  // Atualizar os novos campos adicionados no relatório atual com animação
   if (document.getElementById('arrestsValue')) {
-    document.getElementById('arrestsValue').textContent = results.arrests || 0;
+    updateValueWithAnimation('arrestsValue', results.arrests || 0);
   }
   
   if (document.getElementById('seizedMotorcyclesValue')) {
-    document.getElementById('seizedMotorcyclesValue').textContent = results.seizedMotorcycles || 0;
+    updateValueWithAnimation('seizedMotorcyclesValue', results.seizedMotorcycles || 0);
   }
   
   if (document.getElementById('drugsSeizedValue')) {
     // Formatar o valor de drogas para exibir em gramas com uma casa decimal
     const drugsValue = results.drugsSeized || 0;
-    document.getElementById('drugsSeizedValue').textContent = drugsValue.toFixed(1);
+    updateValueWithAnimation('drugsSeizedValue', drugsValue.toFixed(1));
   }
   
   if (document.getElementById('fugitivesValue')) {
-    document.getElementById('fugitivesValue').textContent = results.fugitives || 0;
+    updateValueWithAnimation('fugitivesValue', results.fugitives || 0);
   }
   
   if (document.getElementById('bladedWeaponsValue')) {
-    document.getElementById('bladedWeaponsValue').textContent = results.bladedWeapons || 0;
+    updateValueWithAnimation('bladedWeaponsValue', results.bladedWeapons || 0);
   }
   
   if (document.getElementById('firearmsValue')) {
-    document.getElementById('firearmsValue').textContent = results.firearms || 0;
+    updateValueWithAnimation('firearmsValue', results.firearms || 0);
   }
   
   // Update occurrence info
@@ -235,39 +263,39 @@ function displayResults(results, totals) {
   
   // Update totals if provided
   if (totals) {
-    // Estatísticas básicas
-    document.getElementById('totalPeopleValue').textContent = totals.people;
-    document.getElementById('totalMotorcyclesValue').textContent = totals.motorcycles;
-    document.getElementById('totalCarsValue').textContent = totals.cars;
-    document.getElementById('totalBicyclesValue').textContent = totals.bicycles;
-    document.getElementById('grandTotalValue').textContent = totals.totalInspections;
-    document.getElementById('reportsCountValue').textContent = totals.reportsCount;
+    // Estatísticas básicas com animação
+    updateValueWithAnimation('totalPeopleValue', totals.people);
+    updateValueWithAnimation('totalMotorcyclesValue', totals.motorcycles);
+    updateValueWithAnimation('totalCarsValue', totals.cars);
+    updateValueWithAnimation('totalBicyclesValue', totals.bicycles);
+    updateValueWithAnimation('grandTotalValue', totals.totalInspections);
+    updateValueWithAnimation('reportsCountValue', totals.reportsCount);
     
-    // Novos dados adicionados (prisões e apreensões)
+    // Novos dados adicionados (prisões e apreensões) com animação
     if (document.getElementById('totalArrestsValue')) {
-      document.getElementById('totalArrestsValue').textContent = totals.arrests || 0;
+      updateValueWithAnimation('totalArrestsValue', totals.arrests || 0);
     }
     
     if (document.getElementById('totalSeizedMotorcyclesValue')) {
-      document.getElementById('totalSeizedMotorcyclesValue').textContent = totals.seizedMotorcycles || 0;
+      updateValueWithAnimation('totalSeizedMotorcyclesValue', totals.seizedMotorcycles || 0);
     }
     
     if (document.getElementById('totalDrugsSeizedValue')) {
       // Formatar o valor de drogas para exibir em gramas com uma casa decimal
       const drugsValue = totals.drugsSeized || 0;
-      document.getElementById('totalDrugsSeizedValue').textContent = drugsValue.toFixed(1);
+      updateValueWithAnimation('totalDrugsSeizedValue', drugsValue.toFixed(1));
     }
     
     if (document.getElementById('totalFugitivesValue')) {
-      document.getElementById('totalFugitivesValue').textContent = totals.fugitives || 0;
+      updateValueWithAnimation('totalFugitivesValue', totals.fugitives || 0);
     }
     
     if (document.getElementById('totalBladedWeaponsValue')) {
-      document.getElementById('totalBladedWeaponsValue').textContent = totals.bladedWeapons || 0;
+      updateValueWithAnimation('totalBladedWeaponsValue', totals.bladedWeapons || 0);
     }
     
     if (document.getElementById('totalFirearmsValue')) {
-      document.getElementById('totalFirearmsValue').textContent = totals.firearms || 0;
+      updateValueWithAnimation('totalFirearmsValue', totals.firearms || 0);
     }
   }
   
