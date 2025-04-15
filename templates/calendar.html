@@ -4,129 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendário de Relatórios - 20ª CIPM</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <!-- Base Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .calendar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .calendar-day {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .calendar-date {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #FFDC00;
-        }
-        .report-item {
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .report-submitted {
-            background-color: rgba(40, 167, 69, 0.3);
-            border-left: 4px solid #28a745;
-        }
-        .report-missing {
-            background-color: rgba(220, 53, 69, 0.3);
-            border-left: 4px solid #dc3545;
-        }
-        .location-badge {
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-right: 10px;
-        }
-        .location-muana {
-            background-color: #007bff;
-        }
-        .location-ponta {
-            background-color: #6f42c1;
-        }
-        .shift-badge {
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-        }
-        .shift-day {
-            background-color: #ffc107;
-            color: #212529;
-        }
-        .shift-night {
-            background-color: #343a40;
-        }
-        .calendar-nav {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #loadingSpinner {
-            display: none;
-            margin: 50px auto;
-        }
-        #errorMessage {
-            display: none;
-            color: #dc3545;
-            background-color: rgba(220, 53, 69, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-    </style>
+    <!-- Calendar Specific Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}">
 </head>
 <body>
-    <header class="py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <h1>Calendário de Relatórios - 20ª CIPM</h1>
-            <a href="/" class="btn btn-outline-light"><i class="bi bi-house-fill"></i> Página Inicial</a>
+    <!-- Header Section -->
+    <header class="header-container">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="logo-text">
+                        <i class="fas fa-shield-alt logo-icon"></i>
+                        20ª CIPM - Controle de Relatórios
+                    </h1>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <a href="/" class="btn btn-primary-custom">
+                        <i class="fas fa-home me-2"></i>Página Inicial
+                    </a>
+                </div>
+            </div>
         </div>
     </header>
 
-    <div class="container mt-4">
+    <!-- Main Content -->
+    <main class="container">
         <div class="calendar-container">
+            <!-- Title Section -->
+            <div class="mb-4">
+                <h2 class="calendar-title">Calendário de Produtividade</h2>
+                <p class="calendar-subtitle">Monitore os relatórios enviados e pendentes para cada dia, local e turno</p>
+            </div>
+
+            <!-- Navigation Bar -->
             <div class="calendar-nav">
                 <div>
-                    <h2 class="mb-0">Controle de Relatórios Diários</h2>
-                    <p class="text-muted">Verifique quais relatórios já foram cadastrados e quais ainda estão pendentes</p>
+                    <h3 class="mb-0 fs-5 text-white">
+                        <i class="fas fa-clipboard-list me-2"></i>
+                        Relatórios Diários
+                    </h3>
                 </div>
-                <div>
-                    <button id="prevBtn" class="btn btn-outline-light me-2">
-                        <i class="bi bi-arrow-left"></i> Anteriores
+                <div class="nav-buttons">
+                    <button id="prevBtn" class="nav-btn nav-btn-prev">
+                        <i class="fas fa-chevron-left nav-icon"></i>
+                        <span>Anteriores</span>
                     </button>
-                    <button id="todayBtn" class="btn btn-warning">
-                        <i class="bi bi-calendar-check"></i> Hoje
+                    <button id="todayBtn" class="nav-btn nav-btn-today mx-2">
+                        <i class="fas fa-calendar-day nav-icon"></i>
+                        <span>Hoje</span>
                     </button>
-                    <button id="nextBtn" class="btn btn-outline-light ms-2">
-                        Próximos <i class="bi bi-arrow-right"></i>
+                    <button id="nextBtn" class="nav-btn nav-btn-next">
+                        <span>Próximos</span>
+                        <i class="fas fa-chevron-right nav-icon"></i>
                     </button>
                 </div>
             </div>
 
-            <div id="loadingSpinner" class="text-center">
-                <div class="spinner-border text-light" role="status">
-                    <span class="visually-hidden">Carregando...</span>
-                </div>
-                <p class="mt-2">Carregando calendário de relatórios...</p>
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loading-container" style="display: none;">
+                <div class="spinner"></div>
+                <p class="loading-text">Carregando calendário de relatórios...</p>
             </div>
 
-            <div id="errorMessage"></div>
+            <!-- Error Message -->
+            <div id="errorMessage" class="error-container" style="display: none;">
+                <i class="fas fa-exclamation-circle error-icon"></i>
+                <p class="error-message">Erro ao carregar o calendário.</p>
+            </div>
 
+            <!-- Calendar View -->
             <div id="calendar">
                 <!-- Calendário será preenchido dinamicamente aqui -->
             </div>
         </div>
-    </div>
+    </main>
 
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Polícia Militar do Pará - 20ª CIPM</p>
+            <div class="footer-divider"></div>
+            <p>Sistema de Análise de Produtividade © 2025</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Calendar Script -->
     <script>
         // Variáveis globais
         let currentStartDate = null;
@@ -138,11 +110,17 @@
             const date = new Date(`${year}-${month}-${day}`);
             
             // Obter nomes de dias e meses em português
-            const dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+            const dayNames = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
             const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
                                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
             
-            return `${dayNames[date.getDay()]}, ${day} de ${monthNames[date.getMonth()]} de ${year}`;
+            return { 
+                weekday: dayNames[date.getDay()],
+                day: day,
+                month: monthNames[date.getMonth()],
+                year: year,
+                fullDate: `${day} de ${monthNames[date.getMonth()]} de ${year}`
+            };
         }
 
         // Verificar se uma data é hoje
@@ -162,21 +140,31 @@
             calendarContainer.innerHTML = '';
             
             if (!calendarData || !calendarData.length) {
-                calendarContainer.innerHTML = '<div class="alert alert-warning">Nenhum registro de calendário encontrado.</div>';
+                calendarContainer.innerHTML = `
+                    <div class="error-container">
+                        <i class="fas fa-calendar-times error-icon"></i>
+                        <p class="error-message">Nenhum registro de calendário encontrado para o período selecionado.</p>
+                    </div>`;
                 return;
             }
             
             calendarData.forEach(day => {
+                const formattedDate = formatDateBR(day.date);
+                const isCurrentDay = isToday(day.date);
+                
                 const dayElement = document.createElement('div');
-                dayElement.className = 'calendar-day';
-                if (isToday(day.date)) {
-                    dayElement.style.borderLeft = '5px solid #FFDC00';
-                }
+                dayElement.className = `calendar-day ${isCurrentDay ? 'today' : ''}`;
                 
                 // Data
                 const dateElement = document.createElement('div');
                 dateElement.className = 'calendar-date';
-                dateElement.textContent = formatDateBR(day.date);
+                dateElement.innerHTML = `
+                    <i class="fas fa-calendar-day date-icon"></i>
+                    <div>
+                        <span class="weekday">${formattedDate.weekday}</span>, 
+                        ${formattedDate.day} de ${formattedDate.month} de ${formattedDate.year}
+                    </div>
+                `;
                 dayElement.appendChild(dateElement);
                 
                 // Relatórios do dia
@@ -184,28 +172,45 @@
                     const reportElement = document.createElement('div');
                     reportElement.className = `report-item ${report.status === 'submitted' ? 'report-submitted' : 'report-missing'}`;
                     
+                    // Informações (Local e Turno)
                     const infoDiv = document.createElement('div');
+                    infoDiv.className = 'report-info';
                     
                     // Local
                     const locationBadge = document.createElement('span');
                     locationBadge.className = `location-badge ${report.location === 'MUANÁ' ? 'location-muana' : 'location-ponta'}`;
-                    locationBadge.textContent = report.location;
+                    locationBadge.innerHTML = `
+                        <i class="fas fa-map-marker-alt badge-icon"></i>
+                        ${report.location}
+                    `;
                     infoDiv.appendChild(locationBadge);
                     
                     // Turno
                     const shiftBadge = document.createElement('span');
-                    shiftBadge.className = `shift-badge ${report.shift.includes('Diurno') ? 'shift-day' : 'shift-night'}`;
-                    shiftBadge.textContent = report.shift.includes('Diurno') ? 'Diurno' : 'Noturno';
+                    const isDayShift = report.shift.includes('Diurno');
+                    shiftBadge.className = `shift-badge ${isDayShift ? 'shift-day' : 'shift-night'}`;
+                    shiftBadge.innerHTML = `
+                        <i class="fas ${isDayShift ? 'fa-sun' : 'fa-moon'} badge-icon"></i>
+                        ${isDayShift ? 'Diurno' : 'Noturno'}
+                    `;
                     infoDiv.appendChild(shiftBadge);
                     
                     reportElement.appendChild(infoDiv);
                     
                     // Status
                     const statusDiv = document.createElement('div');
+                    statusDiv.className = 'report-status';
+                    
                     if (report.status === 'submitted') {
-                        statusDiv.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> <span>Enviado</span>';
+                        statusDiv.innerHTML = `
+                            <i class="fas fa-check-circle status-icon status-submitted"></i>
+                            <span class="status-submitted">Relatório Enviado</span>
+                        `;
                     } else {
-                        statusDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-danger"></i> <span>Pendente</span>';
+                        statusDiv.innerHTML = `
+                            <i class="fas fa-exclamation-triangle status-icon status-missing"></i>
+                            <span class="status-missing">Pendente</span>
+                        `;
                     }
                     reportElement.appendChild(statusDiv);
                     
@@ -219,8 +224,9 @@
         // Carregar o calendário
         function loadCalendar(startDate = null) {
             // Mostrar loading spinner
-            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('loadingSpinner').style.display = 'flex';
             document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('calendar').innerHTML = '';
             
             // Construir URL
             let url = `/api/calendar?days=${daysToShow}`;
@@ -232,7 +238,7 @@
             fetch(url)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Erro ao carregar o calendário');
+                        throw new Error('Erro ao carregar os dados do calendário');
                     }
                     return response.json();
                 })
@@ -244,13 +250,13 @@
                             currentStartDate = data.calendar[0].date;
                         }
                     } else {
-                        throw new Error(data.error || 'Erro desconhecido');
+                        throw new Error(data.error || 'Erro desconhecido no servidor');
                     }
                 })
                 .catch(error => {
-                    document.getElementById('errorMessage').textContent = `Erro: ${error.message}`;
-                    document.getElementById('errorMessage').style.display = 'block';
-                    document.getElementById('calendar').innerHTML = '';
+                    const errorMessageElem = document.getElementById('errorMessage');
+                    errorMessageElem.querySelector('.error-message').textContent = `Erro: ${error.message}`;
+                    errorMessageElem.style.display = 'flex';
                 })
                 .finally(() => {
                     document.getElementById('loadingSpinner').style.display = 'none';
