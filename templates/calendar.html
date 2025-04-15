@@ -381,11 +381,11 @@
             loadCalendarByMonth(firstDay);
         }
         
-        // Navegar para o mês atual
+        // Navegar para o mês atual (abril 2025)
         function goToCurrentMonth() {
-            const today = new Date();
-            currentMonth = today.getMonth();
-            currentYear = today.getFullYear();
+            // Forçar para abril de 2025 como o "mês atual" para o projeto
+            currentMonth = 3; // Abril (índice 0-11)
+            currentYear = 2025;
             
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
@@ -434,11 +434,10 @@
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('calendar').innerHTML = '';
             
-            // Se não forneceu data de início, usar o mês atual
+            // Se não forneceu data de início, usar abril de 2025
             if (!startDate) {
-                const today = new Date();
-                currentMonth = today.getMonth();
-                currentYear = today.getFullYear();
+                currentMonth = 3; // Abril (índice 0-11)
+                currentYear = 2025;
                 startDate = getFirstDayOfMonth(currentYear, currentMonth);
                 endDate = getLastDayOfMonth(currentYear, currentMonth);
             }
@@ -530,9 +529,13 @@
             }
         });
 
-        // Carregar o calendário inicial (mês atual)
+        // Carregar o calendário inicial (mês atual = abril 2025)
         document.addEventListener('DOMContentLoaded', () => {
-            goToCurrentMonth();
+            // Forçar para o mês de abril de 2025 (mês 3, já que é indexado em 0)
+            currentMonth = 3; // Abril (índice 0-11)
+            currentYear = 2025;
+            const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
+            loadCalendarByMonth(firstDay);
         });
     </script>
 </body>

@@ -80,16 +80,14 @@ class Report(db.Model):
             dict: Calendar with status of each date/location/shift
         """
         if start_date is None:
-            # Default to the first day of current month
-            today = datetime.now()
-            start_date = datetime(today.year, today.month, 1)
+            # Default para o dia 1 de abril de 2025
+            start_date = datetime(2025, 4, 1)
         elif isinstance(start_date, str):
             # Parse the string date
             start_date = cls.parse_date(start_date)
             if start_date is None:
-                # Se falhar o parsing, usa primeiro dia do mês atual
-                today = datetime.now()
-                start_date = datetime(today.year, today.month, 1)
+                # Se falhar o parsing, usar o primeiro dia de abril de 2025
+                start_date = datetime(2025, 4, 1)
             else:
                 # Se der certo o parsing, garantir que seja dia 1 do mês informado
                 start_date = datetime(start_date.year, start_date.month, 1)
