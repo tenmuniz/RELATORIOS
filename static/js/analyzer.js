@@ -8,6 +8,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Police Report Analyzer initialized');
   setupEventListeners();
+  
+  // Verificar se estamos na página principal e carregar os totais acumulados
+  if (window.location.pathname === '/' || window.location.pathname === '') {
+    loadTotals();
+  }
 });
 
 /**
@@ -239,6 +244,68 @@ function displayResults(results, totals) {
   
   // Scroll to results
   resultsSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+/**
+ * Carregar os totais acumulados do servidor
+ */
+function loadTotals() {
+  const resultsSection = document.getElementById('resultsSection');
+  if (!resultsSection) return;
+  
+  const loader = document.getElementById('loader');
+  if (loader) loader.style.display = 'block';
+  
+  // Fazer uma requisição para obter apenas os totais
+  fetch('/analyze', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ 
+      text: "RELATÓRIO: MUANÁ\nDATA: 01/01/2025\nPESSOAS A PÉ: 0\nMOTOS: 0\nCARROS: 0\nBICICLETAS: 0\nOCORRÊNCIA: Relatório apenas para carregar totais." 
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success && data.totals) {
+      // Mostrar painel de resultados
+      resultsSection.classList.add('show');
+      
+      // Atualizar apenas os totais acumulados sem alterar o relatório atual
+      document.getElementById('totalPeopleValue').textContent = data.totals.people;
+      document.getElementById('totalMotorcyclesValue').textContent = data.totals.motorcycles;
+      document.getElementById('totalCarsValue').textContent = data.totals.cars;
+      document.getElementById('totalBicyclesValue').textContent = data.totals.bicycles;
+      document.getElementById('grandTotalValue').textContent = data.totals.totalInspections;
+      document.getElementById('reportsCountValue').textContent = data.totals.reportsCount;
+      
+      // Dados de prisões e apreensões
+      if (document.getElementById('totalArrestsValue')) {
+        document.getElementById('totalArrestsValue').textContent = data.totals.arrests || 0;
+      }
+      
+      if (document.getElementById('totalSeizedMotorcyclesValue')) {
+        document.getElementById('totalSeizedMotorcyclesValue').textContent = data.totals.seizedMotorcycles || 0;
+      }
+      
+      if (document.getElementById('totalDrugsSeizedValue')) {
+        document.getElementById('totalDrugsSeizedValue').textContent = data.totals.drugsSeized || 0;
+      }
+      
+      if (document.getElementById('totalFugitivesValue')) {
+        document.getElementById('totalFugitivesValue').textContent = data.totals.fugitives || 0;
+      }
+      
+      console.log('Totais carregados com sucesso:', data.totals);
+    }
+  })
+  .catch(error => {
+    console.error('Erro ao carregar totais:', error);
+  })
+  .finally(() => {
+    if (loader) loader.style.display = 'none';
+  });
 }
 
 /**
