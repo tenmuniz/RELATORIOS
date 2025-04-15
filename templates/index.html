@@ -13,6 +13,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <!-- Print CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/print.css') }}" media="print">
 </head>
 <body>
   <!-- Header Section -->
@@ -87,6 +89,14 @@ OCORRÊNCIA: Descrição da ocorrência..."></textarea>
             <span id="shiftBadge" class="badge-shift float-end"></span>
           </div>
           <div class="card-body">
+          
+            <!-- Elementos específicos para impressão - apenas visíveis ao imprimir -->
+            <div class="print-only report-header">
+              <img src="{{ url_for('static', filename='img/logo-pmpa.png') }}" alt="Logo da PMPA" class="print-logo">
+              <h1>POLÍCIA MILITAR DO PARÁ</h1>
+              <h2>20ª COMPANHIA INDEPENDENTE DE POLÍCIA MILITAR</h2>
+              <h3>RELATÓRIO DE PRODUTIVIDADE POLICIAL</h3>
+            </div>
             <!-- Current Report Statistics -->
             <h5 class="mb-3"><i class="fas fa-file-alt me-2"></i>Relatório Atual</h5>
             <div class="row">
@@ -255,7 +265,7 @@ OCORRÊNCIA: Descrição da ocorrência..."></textarea>
             </div>
             
             <!-- Action Buttons -->
-            <div class="mt-4 text-center">
+            <div class="mt-4 text-center no-print">
               <button class="btn btn-primary" onclick="window.print()">
                 <i class="fas fa-print me-2"></i>Imprimir Relatório
               </button>
@@ -265,6 +275,109 @@ OCORRÊNCIA: Descrição da ocorrência..."></textarea>
               <button class="btn btn-danger ms-3" onclick="resetDatabase()">
                 <i class="fas fa-trash-alt me-2"></i>Zerar Dados
               </button>
+            </div>
+            
+            <!-- Elementos adicionais apenas para impressão -->
+            <div class="print-only">
+              <!-- Tabela de estatísticas para impressão -->
+              <div class="statistics-section">
+                <h3>Estatísticas do Relatório</h3>
+                <table class="statistics-table">
+                  <thead>
+                    <tr>
+                      <th colspan="2">Abordagens</th>
+                      <th colspan="2">Apreensões</th>
+                      <th colspan="2">Prisões e Capturas</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Pessoas a pé</td>
+                      <td id="print-people"></td>
+                      <td>Motos apreendidas</td>
+                      <td id="print-seized-motorcycles"></td>
+                      <td>Prisões</td>
+                      <td id="print-arrests"></td>
+                    </tr>
+                    <tr>
+                      <td>Motos</td>
+                      <td id="print-motorcycles"></td>
+                      <td>Drogas (g)</td>
+                      <td id="print-drugs"></td>
+                      <td>Foragidos</td>
+                      <td id="print-fugitives"></td>
+                    </tr>
+                    <tr>
+                      <td>Carros</td>
+                      <td id="print-cars"></td>
+                      <td>Armas brancas</td>
+                      <td id="print-bladed-weapons"></td>
+                      <td>Total de ocorrências</td>
+                      <td id="print-total-inspections"></td>
+                    </tr>
+                    <tr>
+                      <td>Bicicletas</td>
+                      <td id="print-bicycles"></td>
+                      <td>Armas de fogo</td>
+                      <td id="print-firearms"></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Seção de ocorrência para impressão -->
+              <div class="occurrence-section">
+                <h3>Descrição da Ocorrência</h3>
+                <div class="occurrence-text" id="print-occurrence"></div>
+              </div>
+              
+              <!-- Seção de assinaturas -->
+              <div class="signatures">
+                <div class="signature">
+                  <div class="signature-line">Comandante de Viatura</div>
+                </div>
+                <div class="signature">
+                  <div class="signature-line">Comandante da Operação</div>
+                </div>
+              </div>
+              
+              <!-- Data de impressão -->
+              <div class="print-date">Relatório gerado em: <span id="print-current-date"></span></div>
+              
+              <!-- Rodapé de impressão -->
+              <div class="print-footer">
+                Sistema de Análise de Produtividade | 20ª CIPM | Polícia Militar do Pará
+              </div>
+              
+              <!-- Script para preencher os dados de impressão -->
+              <script>
+                window.addEventListener('beforeprint', function() {
+                  // Preencher dados do relatório na versão de impressão
+                  document.getElementById('print-people').textContent = document.getElementById('peopleValue').textContent;
+                  document.getElementById('print-motorcycles').textContent = document.getElementById('motorcyclesValue').textContent;
+                  document.getElementById('print-cars').textContent = document.getElementById('carsValue').textContent;
+                  document.getElementById('print-bicycles').textContent = document.getElementById('bicyclesValue').textContent;
+                  document.getElementById('print-arrests').textContent = document.getElementById('arrestsValue').textContent;
+                  document.getElementById('print-seized-motorcycles').textContent = document.getElementById('seizedMotorcyclesValue').textContent;
+                  document.getElementById('print-drugs').textContent = document.getElementById('drugsSeizedValue').textContent;
+                  document.getElementById('print-fugitives').textContent = document.getElementById('fugitivesValue').textContent;
+                  document.getElementById('print-bladed-weapons').textContent = document.getElementById('bladedWeaponsValue').textContent;
+                  document.getElementById('print-firearms').textContent = document.getElementById('firearmsValue').textContent;
+                  document.getElementById('print-total-inspections').textContent = document.getElementById('totalValue').textContent;
+                  document.getElementById('print-occurrence').textContent = document.getElementById('occurrenceValue').textContent;
+                  
+                  // Formatar data atual
+                  const now = new Date();
+                  const day = String(now.getDate()).padStart(2, '0');
+                  const month = String(now.getMonth() + 1).padStart(2, '0');
+                  const year = now.getFullYear();
+                  const hours = String(now.getHours()).padStart(2, '0');
+                  const minutes = String(now.getMinutes()).padStart(2, '0');
+                  document.getElementById('print-current-date').textContent = `${day}/${month}/${year} às ${hours}:${minutes}`;
+                });
+              </script>
             </div>
           </div>
         </div>
