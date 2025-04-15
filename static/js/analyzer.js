@@ -81,7 +81,7 @@ function analyzeReport() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ text: reportText })
+      body: JSON.stringify({ text: reportTextCopy })
     })
     .then(response => {
       if (!response.ok) {
