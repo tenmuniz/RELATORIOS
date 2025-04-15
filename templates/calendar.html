@@ -162,6 +162,8 @@
             const dayNames = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
             const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
                                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            const shortMonthNames = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 
+                                    'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
             
             return { 
                 weekday: dayNames[date.getDay()],
@@ -169,7 +171,8 @@
                 month: monthNames[date.getMonth()],
                 year: year,
                 fullDate: `${day} de ${monthNames[date.getMonth()]} de ${year}`,
-                shortMonth: monthNames[date.getMonth()].substring(0, 3)
+                shortMonth: monthNames[date.getMonth()].substring(0, 3),
+                shortMonthUpper: shortMonthNames[date.getMonth()]
             };
         }
 
@@ -202,19 +205,19 @@
             
             // Se estamos mostrando um mês inteiro (do dia 1 ao último dia)
             if (start.day === "01" && start.month === end.month && start.year === end.year) {
-                return `${start.month} de ${start.year}`;
+                return `01 ${start.shortMonthUpper} - ${end.day} ${start.shortMonthUpper} ${end.year}`;
             } 
             // Se estamos mostrando dias do mesmo mês
             else if (start.month === end.month && start.year === end.year) {
-                return `${start.day} a ${end.day} de ${start.month} de ${start.year}`;
+                return `${start.day} ${start.shortMonthUpper} - ${end.day} ${start.shortMonthUpper} ${end.year}`;
             } 
             // Se estamos mostrando meses diferentes mas do mesmo ano
             else if (start.year === end.year) {
-                return `${start.day} ${start.shortMonth} - ${end.day} ${end.shortMonth} ${end.year}`;
+                return `${start.day} ${start.shortMonthUpper} - ${end.day} ${end.shortMonthUpper} ${end.year}`;
             } 
             // Se estamos mostrando anos diferentes
             else {
-                return `${start.day}/${start.shortMonth}/${start.year} - ${end.day}/${end.shortMonth}/${end.year}`;
+                return `${start.day} ${start.shortMonthUpper} ${start.year} - ${end.day} ${end.shortMonthUpper} ${end.year}`;
             }
         }
         
