@@ -102,5 +102,7 @@ def analyze_police_report(report_text):
             "seized_motorcycles_count": 0,
             "drugs_seized_count": 0,
             "fugitives_count": 0,
+            "bladed_weapons_count": 0,
+            "firearms_count": 0,
             "occurrence": "Erro na análise de IA: " + str(e)
         }

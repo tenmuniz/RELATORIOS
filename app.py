@@ -114,6 +114,8 @@ def analyze():
                     seized_motorcycles_count=ai_results.get('seized_motorcycles_count', 0),
                     drugs_seized_count=ai_results.get('drugs_seized_count', 0),
                     fugitives_count=ai_results.get('fugitives_count', 0),
+                    bladed_weapons_count=ai_results.get('bladed_weapons_count', 0),
+                    firearms_count=ai_results.get('firearms_count', 0),
                     occurrence=ai_results.get('occurrence', 'Sem ocorrência relevante')
                 )
                 
@@ -250,6 +252,22 @@ def analyze():
                         # Se for foragido, também contabiliza como prisão
                         if arrests_count == 0:
                             arrests_count = 1
+                        break
+                
+                # Verificar se tem armas brancas apreendidas
+                bladed_weapons_count = 0
+                bladed_weapons_keywords = ['ARMA BRANCA', 'FACA', 'FACÃO', 'CANIVETE', 'ESTILETE', 'FACAS', 'PEIXEIRA']
+                for keyword in bladed_weapons_keywords:
+                    if keyword in normalized_text:
+                        bladed_weapons_count = 1
+                        break
+                
+                # Verificar se tem armas de fogo apreendidas
+                firearms_count = 0
+                firearms_keywords = ['ARMA DE FOGO', 'REVÓLVER', 'PISTOLA', 'ESPINGARDA', 'RIFLE', 'REVOLVER', 'ARMAMENTO', 'MUNIÇÃO']
+                for keyword in firearms_keywords:
+                    if keyword in normalized_text:
+                        firearms_count = 1
                         break
                         
                 # Create new report
