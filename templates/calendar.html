@@ -446,11 +446,8 @@
             // Construir URL
             let url = `/api/calendar?start_date=${startDate}`;
             
-            // Se tiver data final, calcular dias
-            if (endDate) {
-                const days = getDaysInRange(startDate, endDate);
-                url += `&days=${days}`;
-            }
+            // Definir dias como 0 para forçar o backend a calcular o último dia do mês
+            url += "&days=0";
             
             // Fazer a requisição
             fetch(url)

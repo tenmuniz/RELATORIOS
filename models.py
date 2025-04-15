@@ -108,7 +108,16 @@ class Report(db.Model):
         # Generate the calendar
         calendar = []
         current_date = start_date
-        end_date = start_date + timedelta(days=days)
+        
+        # Calcular o último dia do mesmo mês
+        if days > 0:
+            # Se recebemos os dias, usamos isso
+            end_date = start_date + timedelta(days=days)
+        else:
+            # Caso contrário, calculamos o último dia do mês
+            next_month = current_date.replace(day=28) + timedelta(days=4)  # Vamos para o próximo mês
+            last_day = (next_month.replace(day=1) - timedelta(days=1)).day  # Retrocede para o último dia do mês atual
+            end_date = current_date.replace(day=last_day)
         
         while current_date < end_date:
             date_str = current_date.strftime('%d/%m/%Y')
