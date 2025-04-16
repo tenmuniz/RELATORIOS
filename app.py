@@ -1,6 +1,7 @@
 import os
 import logging
 import re
+from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify
 from models import db, Report
 
@@ -450,24 +451,36 @@ def delete_last_report():
 def get_reports_calendar():
     """API endpoint to get the reports calendar."""
     try:
-        # Forçar que a data de início seja 01/04/2025 e o período seja abril completo
-        start_date = "01/04/2025"
-        days = 30  # Abril tem 30 dias
+        # Obter a data de início da requisição
+        start_date = request.args.get("start_date")
+        days_param = request.args.get("days", "0")
         
-        # Obter o calendário de relatórios (forçando abril/2025)
+        # Se nenhuma data foi fornecida, usar abril de 2025 como padrão
+        if not start_date:
+            start_date = "01/04/2025"
+        
+        # Obter o dia, mês e ano da data inicial
+        day, month, year = map(int, start_date.split("/"))
+        
+        # Se days=0, calcular o número de dias no mês
+        if days_param == "0":
+            # Determinar o número de dias no mês
+            # Criar uma data do próximo mês, dia 0 (último dia do mês atual)
+            next_month = month + 1 if month < 12 else 1
+            next_year = year if month < 12 else year + 1
+            last_day = datetime(next_year, next_month, 1) - timedelta(days=1)
+            days = last_day.day
+        else:
+            days = int(days_param)
+        
+        logging.info(f"Carregando calendário para: {start_date} com {days} dias")
+        
+        # Obter o calendário de relatórios para a data especificada
         calendar = Report.get_reports_calendar(start_date, days)
-        
-        # Filtrar para garantir que só temos datas de abril/2025
-        filtered_calendar = []
-        for day in calendar:
-            date_parts = day["date"].split("/")
-            # Verificar se é abril/2025
-            if len(date_parts) == 3 and date_parts[1] == "04" and date_parts[2] == "2025":
-                filtered_calendar.append(day)
         
         return jsonify({
             "success": True,
-            "calendar": filtered_calendar
+            "calendar": calendar
         })
         
     except Exception as e:

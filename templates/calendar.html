@@ -477,7 +477,6 @@
             document.getElementById('calendar').innerHTML = '';
             
             // Usar as datas recebidas que já refletem o mês selecionado
-            // Não sobrescrever as variáveis startDate e endDate aqui
             
             // Atualizar o seletor de mês para refletir o mês atual
             document.getElementById('monthSelector').value = currentMonth;
@@ -485,6 +484,10 @@
             
             // Determinar o nome do mês para mostrar na interface
             const monthName = getMonthName(currentMonth);
+            
+            // Log para debug
+            console.log(`Carregando calendário para: Mês ${monthName} (${currentMonth+1}), Ano ${currentYear}`);
+            console.log(`Data início: ${startDate}, Data fim: ${endDate}`);
             
             // Construir URL
             let url = `/api/calendar?start_date=${startDate}`;
