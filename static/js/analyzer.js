@@ -483,6 +483,42 @@ function sendToServer(text) {
  * Show an error message
  * @param {string} message - The error message to display
  */
+/**
+ * Função para colar rapidamente o texto da área de transferência
+ */
+async function handleQuickPaste() {
+  try {
+    // Verifica se a API de área de transferência está disponível
+    if (!navigator.clipboard) {
+      showError("Seu navegador não suporta acesso à área de transferência. Por favor, cole o texto manualmente usando Ctrl+V.");
+      return;
+    }
+    
+    // Tenta ler o texto da área de transferência
+    const text = await navigator.clipboard.readText();
+    
+    if (!text) {
+      showError("Não foi possível encontrar texto na área de transferência. Por favor, copie o relatório e tente novamente.");
+      return;
+    }
+    
+    // Coloca o texto na área de texto
+    const textarea = document.getElementById('reportText');
+    textarea.value = text;
+    
+    // Efeito visual para feedback
+    textarea.classList.add('flash-paste');
+    setTimeout(() => {
+      textarea.classList.remove('flash-paste');
+    }, 700);
+    
+  } catch (err) {
+    // Alguns navegadores bloqueiam o acesso à área de transferência por segurança
+    showError("Não foi possível acessar a área de transferência. Por favor, cole o texto manualmente usando Ctrl+V ou verifique as permissões do navegador.");
+    console.error("Erro ao acessar a área de transferência:", err);
+  }
+}
+
 function showError(message) {
   const errorMessage = document.getElementById('errorMessage');
   errorMessage.textContent = message;
