@@ -263,16 +263,24 @@ OCORRÊNCIA: Descrição da ocorrência..."></textarea>
             </div>
             
             <!-- Action Buttons -->
-            <div class="mt-4 text-center">
-              <button id="printReportButton" class="btn btn-primary mb-3">
-                <i class="fas fa-print me-2"></i>Imprimir Totais Acumulados
-              </button>
-              <button class="btn btn-warning ms-3" onclick="deleteLastReport()">
-                <i class="fas fa-undo me-2"></i>Excluir Último Relatório
-              </button>
-              <button class="btn btn-danger ms-3" onclick="resetDatabase()">
-                <i class="fas fa-trash-alt me-2"></i>Zerar Dados
-              </button>
+            <div class="mt-4 text-center action-buttons">
+              <div class="row g-2">
+                <div class="col-md-4 mb-2">
+                  <button id="printReportButton" class="btn btn-primary w-100">
+                    <i class="fas fa-print me-2"></i>Imprimir Relatório
+                  </button>
+                </div>
+                <div class="col-md-4 mb-2">
+                  <button class="btn btn-warning w-100" onclick="deleteLastReport()">
+                    <i class="fas fa-undo me-2"></i>Excluir Último
+                  </button>
+                </div>
+                <div class="col-md-4 mb-2">
+                  <button class="btn btn-danger w-100" onclick="resetDatabase()">
+                    <i class="fas fa-trash-alt me-2"></i>Zerar Dados
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

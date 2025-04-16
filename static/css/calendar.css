@@ -400,23 +400,143 @@ body::before {
   box-shadow: 0 2px 6px rgba(255, 220, 0, 0.3);
 }
 
-/* Responsive Styles */
+/* Ajustes para dispositivos móveis */
 @media (max-width: 768px) {
+  /* Ajustes do cabeçalho */
+  .header-container {
+    padding: 10px 0;
+  }
+  
+  .logo-text {
+    font-size: 18px;
+  }
+  
+  .logo-icon {
+    font-size: 18px;
+  }
+  
+  /* Container principal */
+  .calendar-container {
+    padding: 10px;
+  }
+  
+  /* Títulos */
+  .calendar-title h2 {
+    font-size: 20px;
+  }
+  
+  .calendar-subtitle {
+    font-size: 14px;
+  }
+  
+  /* Status cards */
+  .status-card {
+    padding: 10px;
+  }
+  
+  .status-icon {
+    font-size: 20px;
+  }
+  
+  .status-value {
+    font-size: 18px;
+  }
+  
+  /* Barra de navegação */
   .calendar-nav {
     flex-direction: column;
-    gap: 1rem;
+    gap: 10px;
+  }
+  
+  #currentPeriodText {
+    font-size: 16px;
+    text-align: center;
   }
   
   .nav-buttons {
-    display: flex;
-    width: 100%;
-  }
-  
-  .nav-btn {
-    flex: 1;
+    flex-wrap: wrap;
     justify-content: center;
   }
   
+  .nav-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+    margin-bottom: 5px;
+  }
+  
+  .nav-btn span {
+    display: none;
+  }
+  
+  .month-selector-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+    margin-right: 0 !important;
+  }
+  
+  .month-selector {
+    width: 120px;
+  }
+  
+  /* Calendário */
+  .calendar-day {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .calendar-date {
+    font-size: 14px;
+  }
+  
+  .report-item {
+    padding: 8px;
+  }
+  
+  .location-badge, .shift-badge, .status-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  
+  .report-status {
+    font-size: 11px;
+  }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 380px) {
+  .status-card {
+    padding: 8px;
+  }
+  
+  .status-value {
+    font-size: 16px;
+  }
+  
+  .status-label {
+    font-size: 11px;
+  }
+  
+  .calendar-day {
+    padding: 8px;
+  }
+  
+  .calendar-date {
+    font-size: 12px;
+  }
+  
+  .date-icon {
+    font-size: 14px;
+  }
+  
+  .weekday {
+    font-weight: normal;
+  }
+}
+
+/* Responsive Styles - Adicionais */
+@media (max-width: 768px) {
   .report-item {
     flex-direction: column;
     align-items: flex-start;
