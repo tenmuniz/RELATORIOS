@@ -242,17 +242,21 @@ class PrintManager {
   }
 
   /**
-   * Gerar visualização específica para PDF com foco nos totais acumulados
+   * Gerar visualização específica para PDF apenas com os totais acumulados do mês corrente
    * @param {HTMLElement} container - Container para o relatório
    */
   generatePDFPrintView(container) {
-    // Cabeçalho com logo institucional
+    // Mês atual (Abril 2025)
+    const currentMonth = "ABRIL";
+    const currentYear = "2025";
+    
+    // Cabeçalho com logo institucional e título claro apenas de totais
     container.innerHTML = `
       <div class="print-header">
         ${this.logoSVG}
         <h1 class="print-title">POLÍCIA MILITAR DO PARÁ</h1>
         <h2 class="print-subtitle">20ª COMPANHIA INDEPENDENTE DE POLÍCIA MILITAR</h2>
-        <p>RELATÓRIO DE PRODUTIVIDADE OPERACIONAL - TOTAIS ACUMULADOS</p>
+        <p>TOTAIS ACUMULADOS - ${currentMonth} ${currentYear}</p>
       </div>
     `;
     
@@ -266,8 +270,8 @@ class PrintManager {
     reportInfo.style.marginBottom = '25px';
     reportInfo.innerHTML = `
       <div style="width: 100%; text-align: right; font-weight: bold;">
-        Data do Relatório: ${formattedDate}<br>
-        Total de Relatórios Processados: ${document.getElementById('reportsCountValue').textContent || '0'}
+        Data de Emissão: ${formattedDate}<br>
+        Total de Relatórios no Mês: ${document.getElementById('reportsCountValue').textContent || '0'}
       </div>
     `;
     container.appendChild(reportInfo);
@@ -433,109 +437,56 @@ class PrintManager {
   }
 
   /**
-   * Gerar relatório completo com totais acumulados
+   * Gerar relatório detalhado apenas com totais acumulados
    * @param {HTMLElement} container - Container para o relatório
    */
   generateFullReportPrintView(container) {
+    // Mês atual (Abril 2025)
+    const currentMonth = "ABRIL";
+    const currentYear = "2025";
+    
     // Cabeçalho do relatório
     container.innerHTML = `
       <div class="print-header">
         ${this.logoSVG}
         <h1 class="print-title">POLÍCIA MILITAR DO PARÁ</h1>
         <h2 class="print-subtitle">20ª COMPANHIA INDEPENDENTE DE POLÍCIA MILITAR</h2>
-        <p>RELATÓRIO COMPLETO DE PRODUTIVIDADE OPERACIONAL</p>
+        <p>RELATÓRIO DETALHADO - TOTAIS ACUMULADOS ${currentMonth} ${currentYear}</p>
       </div>
     `;
     
-    // Informações do relatório atual
-    const location = document.getElementById('locationValue').textContent || 'NÃO IDENTIFICADO';
-    const date = document.getElementById('dateValue').textContent || '01/04/2025';
-    const shift = document.getElementById('shiftValue').textContent || 'Não identificado';
+    // Informações gerais do relatório
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('pt-BR');
     
     const reportInfo = document.createElement('div');
     reportInfo.className = 'print-report-info';
+    reportInfo.style.marginBottom = '20px';
     reportInfo.innerHTML = `
-      <div class="print-info-column">
-        <div class="print-info-item">
-          <span class="print-info-label">Local:</span>
-          <span>${location}</span>
+      <div style="display: flex; justify-content: space-between; width: 100%;">
+        <div>
+          <div style="font-weight: bold;">COMANDO DE POLICIAMENTO REGIONAL XII</div>
+          <div>20ª COMPANHIA INDEPENDENTE DE POLÍCIA MILITAR</div>
+          <div>CONTROLE DE PRODUTIVIDADE OPERACIONAL</div>
         </div>
-        <div class="print-info-item">
-          <span class="print-info-label">Data do Relatório:</span>
-          <span>${date}</span>
-        </div>
-      </div>
-      <div class="print-info-column">
-        <div class="print-info-item">
-          <span class="print-info-label">Turno:</span>
-          <span>${shift}</span>
-        </div>
-        <div class="print-info-item">
-          <span class="print-info-label">Total de Relatórios:</span>
-          <span>${document.getElementById('reportsCountValue').textContent || '0'}</span>
+        <div style="text-align: right; font-weight: bold;">
+          <div>Mês de Referência: ${currentMonth}/${currentYear}</div>
+          <div>Relatório Emitido em: ${formattedDate}</div>
+          <div>Total de Relatórios: ${document.getElementById('reportsCountValue').textContent || '0'}</div>
         </div>
       </div>
     `;
     container.appendChild(reportInfo);
     
-    // Adicionar informações do relatório atual
-    const currentReportTitle = document.createElement('h3');
-    currentReportTitle.className = 'print-section-title';
-    currentReportTitle.innerHTML = 'RELATÓRIO ATUAL';
-    container.appendChild(currentReportTitle);
-    
-    // Estatísticas do relatório atual em tabela
-    const currentStatsTable = document.createElement('table');
-    currentStatsTable.className = 'print-detail-table';
-    currentStatsTable.innerHTML = `
-      <tr>
-        <th>Pessoas a Pé</th>
-        <th>Motos</th>
-        <th>Carros</th>
-        <th>Bicicletas</th>
-        <th>Prisões</th>
-        <th>Forag.</th>
-      </tr>
-      <tr>
-        <td>${document.getElementById('peopleValue').textContent || '0'}</td>
-        <td>${document.getElementById('motorcyclesValue').textContent || '0'}</td>
-        <td>${document.getElementById('carsValue').textContent || '0'}</td>
-        <td>${document.getElementById('bicyclesValue').textContent || '0'}</td>
-        <td>${document.getElementById('arrestsValue').textContent || '0'}</td>
-        <td>${document.getElementById('fugitivesValue').textContent || '0'}</td>
-      </tr>
-      <tr>
-        <th>Motos Apreen.</th>
-        <th>Drogas</th>
-        <th>Armas Brancas</th>
-        <th>Armas de Fogo</th>
-        <th colspan="2">Total Abordagens</th>
-      </tr>
-      <tr>
-        <td>${document.getElementById('seizedMotorcyclesValue').textContent || '0'}</td>
-        <td>${document.getElementById('drugsSeizedValue').textContent || '0'}</td>
-        <td>${document.getElementById('bladedWeaponsValue').textContent || '0'}</td>
-        <td>${document.getElementById('firearmsValue').textContent || '0'}</td>
-        <td colspan="2">${document.getElementById('totalValue').textContent || '0'}</td>
-      </tr>
-    `;
-    container.appendChild(currentStatsTable);
-    
-    // Adicionar ocorrência
-    const occurrence = document.getElementById('occurrenceValue').textContent || 'Sem ocorrência relevante.';
-    const occurrenceContainer = document.createElement('div');
-    occurrenceContainer.className = 'print-occurrence';
-    occurrenceContainer.innerHTML = `
-      <div class="print-occurrence-title">Ocorrência:</div>
-      <div class="print-occurrence-text">${occurrence}</div>
-    `;
-    container.appendChild(occurrenceContainer);
-    
-    // Adicionar seção de totais acumulados
+    // Adicionar título da seção de totais acumulados
     const totalsTitle = document.createElement('h3');
     totalsTitle.className = 'print-section-title';
-    totalsTitle.innerHTML = 'ESTATÍSTICAS ACUMULADAS';
-    totalsTitle.style.marginTop = '30px';
+    totalsTitle.innerHTML = 'PRODUTIVIDADE MENSAL ACUMULADA';
+    totalsTitle.style.margin = '25px 0 15px 0';
+    totalsTitle.style.textAlign = 'center';
+    totalsTitle.style.color = '#003366';
+    totalsTitle.style.borderBottom = '2px solid #003366';
+    totalsTitle.style.paddingBottom = '5px';
     container.appendChild(totalsTitle);
     
     // Estatísticas acumuladas em tabela
