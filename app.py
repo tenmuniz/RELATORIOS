@@ -307,10 +307,10 @@ def analyze():
         total_fugitives = sum(report.fugitives_count for report in reports)
         total_bladed_weapons = sum(report.bladed_weapons_count for report in reports)
         total_firearms = sum(report.firearms_count for report in reports)
-        # Total de inspeções deve incluir todos os itens contabilizados
-        total_inspections = (total_people + total_motorcycles + total_cars + total_bicycles + 
-                            total_arrests + total_seized_motorcycles + total_drugs_seized + 
-                            total_fugitives + total_bladed_weapons + total_firearms)
+        # Total de inspeções deve incluir apenas pessoas e veículos abordados
+        # Conforme solicitado pelo usuário: não incluir drogas apreendidas no total
+        total_inspections = (total_people + total_motorcycles + total_cars + total_bicycles +
+                            total_arrests + total_fugitives)
         
         # Return response based on request type
         response_data = {
@@ -379,8 +379,9 @@ def delete_last_report():
         total_fugitives = sum(report.fugitives_count for report in reports)
         total_bladed_weapons = sum(report.bladed_weapons_count for report in reports)
         total_firearms = sum(report.firearms_count for report in reports)
-        # Calcular o total de inspeções (apenas pessoas e veículos)
-        total_inspections = total_people + total_motorcycles + total_cars + total_bicycles
+        # Calcular o total de inspeções (pessoas, veículos, prisões e foragidos)
+        total_inspections = (total_people + total_motorcycles + total_cars + total_bicycles + 
+                            total_arrests + total_fugitives)
         
         return jsonify({
             "success": True,

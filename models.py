@@ -28,10 +28,11 @@ class Report(db.Model):
 
     @property
     def total_inspections(self):
-        """Calculate total inspections (apenas pessoas e veículos abordados)"""
-        # Somente contar pessoas e veículos abordados, conforme solicitação do usuário
-        # Não incluir prisões, apreensões, armas ou drogas no total
-        return (self.people_count + self.motorcycles_count + self.cars_count + self.bicycles_count)
+        """Calculate total inspections (pessoas, veículos, prisões e foragidos)"""
+        # Contar pessoas, veículos, prisões e foragidos abordados, conforme solicitação do usuário
+        # Não incluir apreensões de motos, armas ou drogas no total
+        return (self.people_count + self.motorcycles_count + self.cars_count + self.bicycles_count + 
+                self.arrests_count + self.fugitives_count)
         
     def to_dict(self):
         """Convert report to dictionary"""
