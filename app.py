@@ -33,10 +33,19 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+@app.route("/healthz")
+def healthz():
+    """Health check endpoint for deployment."""
+    return jsonify({"status": "ok"}), 200
+
 @app.route("/")
 def index():
     """Render the main page."""
-    return render_template("index.html")
+    try:
+        return render_template("index.html")
+    except Exception as e:
+        logging.error(f"Error rendering index: {str(e)}")
+        return jsonify({"error": "Service is starting"}), 503
 
 @app.route("/calendario")
 def calendar():
