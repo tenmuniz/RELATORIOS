@@ -1,0 +1,17 @@
+@media print {
+  /* Esconder elementos específicos para impressão */
+  .statistics-section,
+  .occurrence-section,
+  .signatures,
+  .print-date,
+  .print-footer,
+  h3, h2, h1,
+  table.statistics-table {
+    display: none !important;
+  }
+  
+  /* Garantir que apenas os elementos básicos da página sejam exibidos */
+  body * {
+    visibility: visible;
+  }
+}
