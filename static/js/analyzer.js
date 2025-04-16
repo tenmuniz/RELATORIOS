@@ -562,6 +562,55 @@ function deleteLastReport() {
           document.getElementById('totalFirearmsValue').textContent = data.totals.firearms;
         }
         
+        // Limpar os valores do relatório atual na interface
+        // Para evitar confusão com relatórios anteriores que foram excluídos
+        document.getElementById('locationValue').textContent = '-';
+        document.getElementById('dateValue').textContent = '-';
+        document.getElementById('shiftValue').textContent = '-';
+        document.getElementById('peopleValue').textContent = '0';
+        document.getElementById('motorcyclesValue').textContent = '0';
+        document.getElementById('carsValue').textContent = '0';
+        document.getElementById('bicyclesValue').textContent = '0';
+        document.getElementById('totalValue').textContent = '0';
+        document.getElementById('occurrenceValue').textContent = 'Sem ocorrência relevante';
+        
+        // Também limpar os campos adicionais do relatório atual
+        if (document.getElementById('arrestsValue')) {
+          document.getElementById('arrestsValue').textContent = '0';
+        }
+        
+        if (document.getElementById('seizedMotorcyclesValue')) {
+          document.getElementById('seizedMotorcyclesValue').textContent = '0';
+        }
+        
+        if (document.getElementById('drugsSeizedValue')) {
+          document.getElementById('drugsSeizedValue').textContent = '0.0 g';
+        }
+        
+        if (document.getElementById('fugitivesValue')) {
+          document.getElementById('fugitivesValue').textContent = '0';
+        }
+        
+        if (document.getElementById('bladedWeaponsValue')) {
+          document.getElementById('bladedWeaponsValue').textContent = '0';
+        }
+        
+        if (document.getElementById('firearmsValue')) {
+          document.getElementById('firearmsValue').textContent = '0';
+        }
+        
+        // Limpar o texto do relatório no textarea
+        document.getElementById('reportText').value = '';
+        
+        // Limpar os badges de localização e turno
+        if (document.getElementById('locationBadge')) {
+          document.getElementById('locationBadge').textContent = '-';
+        }
+        
+        if (document.getElementById('shiftBadge')) {
+          document.getElementById('shiftBadge').textContent = '-';
+        }
+        
         // Exibir mensagem de sucesso
         alert(`${data.message}`);
       } else {
