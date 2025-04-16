@@ -1,73 +1,256 @@
 @media print {
-  /* Remover qualquer formatação extra que possa aparecer na impressão */
-  .statistics-section,
-  .occurrence-section,
-  .signatures,
-  .print-date,
-  .print-footer,
-  table.statistics-table {
-    display: none !important;
+  /* Reset geral para impressão */
+  * {
+    -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
+    color-adjust: exact !important; /* Firefox */
+    print-color-adjust: exact !important;
   }
   
-  /* Garantir que apenas os elementos visuais importantes são exibidos */
-  body {
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+  
+  html, body {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 0;
     background: white !important;
+    font-family: 'Roboto', Arial, sans-serif !important;
     color: black !important;
-    font-family: Arial, sans-serif !important;
   }
   
   /* Esconder elementos desnecessários na impressão */
   header, 
   footer,
   nav,
-  .btn,
+  .btn:not(.no-print-hide),
   #reportText,
+  #analyzeButton,
+  #clearButton,
   .error-message,
   .loader {
     display: none !important;
   }
   
-  /* Garantir que textos sejam pretos, não brancos ou coloridos */
-  h1, h2, h3, h4, h5, p, div, span {
-    color: black !important;
-    text-shadow: none !important;
+  /* Container principal formatado para impressão */
+  .app-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
   
-  /* Formatar estatísticas para impressão */
-  .stat-box {
-    background: none !important;
-    box-shadow: none !important;
-    border: 1px solid #ddd !important;
-    margin-bottom: 5px !important;
+  /* Show print-only elements */
+  .print-only {
+    display: block !important;
   }
   
-  .stat-value {
-    color: black !important;
-    -webkit-text-fill-color: black !important;
-    text-shadow: none !important;
+  .print-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #333;
   }
   
-  .stat-label {
-    color: #555 !important;
+  .print-logo {
+    max-height: 80px;
   }
   
-  /* Remover estilos de fundo das estatísticas */
-  .bg-primary, .bg-success, .bg-info, .bg-warning, .bg-danger {
-    background: none !important;
+  .print-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .print-subtitle {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  /* Report info formatting */
+  .print-report-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f5f5f5 !important;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .print-info-item {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .print-info-label {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  /* Estatísticas na impressão - layout de grade */
+  .print-statistics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  /* Estatísticas detalhadas em forma de tabela */
+  .print-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .print-detail-table th,
+  .print-detail-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .print-detail-table th {
+    background-color: #f2f2f2 !important;
+    font-weight: bold;
+  }
+  
+  /* Estilização para cartões de estatísticas de impressão */
+  .print-stat-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    background-color: #fff !important;
+  }
+  
+  .print-stat-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333 !important;
+    margin-bottom: 5px;
+  }
+  
+  .print-stat-label {
+    font-size: 12px;
+    color: #666 !important;
+  }
+  
+  /* Classificações de cores para os cartões de estatísticas */
+  .print-stat-primary {
+    border-left: 5px solid #007bff !important;
+  }
+  
+  .print-stat-success {
+    border-left: 5px solid #28a745 !important;
+  }
+  
+  .print-stat-danger {
+    border-left: 5px solid #dc3545 !important;
+  }
+  
+  .print-stat-warning {
+    border-left: 5px solid #ffc107 !important;
+  }
+  
+  .print-stat-info {
+    border-left: 5px solid #17a2b8 !important;
+  }
+  
+  /* Ocorrência e campos de texto */
+  .print-occurrence {
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #f9f9f9 !important;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .print-occurrence-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .print-occurrence-text {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  /* Assinaturas e rodapé */
+  .print-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .print-signature {
+    text-align: center;
+    width: 40%;
+  }
+  
+  .print-signature-line {
+    border-top: 1px solid #333;
+    margin-top: 30px;
+    padding-top: 5px;
+  }
+  
+  .print-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #666;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+  }
+  
+  .print-datetime {
+    font-size: 10px;
+    text-align: right;
+    margin-top: 10px;
+    color: #999;
+  }
+  
+  /* Totais de estatísticas */
+  .print-totals {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f5f5f5 !important;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .print-totals-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+  }
+  
+  .print-totals-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  
+  /* Hide what we don't want to print */
+  #resultsSection {
     background-color: white !important;
-  }
-  
-  /* Formatar cartões */
-  .card {
-    border: 1px solid #ccc !important;
     box-shadow: none !important;
-    background: white !important;
-    break-inside: avoid !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   
-  .card-header {
-    background-color: #f8f8f8 !important;
-    color: black !important;
-    border-bottom: 1px solid #ddd !important;
+  .card-header, .card-body {
+    padding: 0 !important;
+    background-color: white !important;
+    border: none !important;
+  }
+  
+  .card {
+    border: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
   }
 }
