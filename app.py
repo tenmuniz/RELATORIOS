@@ -527,7 +527,7 @@ def get_reports_by_location():
             locations[report.location]['fugitives'] += report.fugitives_count
             locations[report.location]['bladed_weapons'] += report.bladed_weapons_count
             locations[report.location]['firearms'] += report.firearms_count
-            locations[report.location]['total_inspections'] += report.total_inspections()
+            locations[report.location]['total_inspections'] += report.total_inspections
             locations[report.location]['reports_count'] += 1
         
         # Obter também os totais gerais
