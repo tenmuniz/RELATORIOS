@@ -97,16 +97,33 @@
                     </h3>
                 </div>
                 <div class="nav-buttons">
+                    <div class="month-selector-container me-3">
+                        <select id="monthSelector" class="form-select month-selector">
+                            <option value="0">Janeiro</option>
+                            <option value="1">Fevereiro</option>
+                            <option value="2">Março</option>
+                            <option value="3">Abril</option>
+                            <option value="4">Maio</option>
+                            <option value="5">Junho</option>
+                            <option value="6">Julho</option>
+                            <option value="7">Agosto</option>
+                            <option value="8">Setembro</option>
+                            <option value="9">Outubro</option>
+                            <option value="10">Novembro</option>
+                            <option value="11">Dezembro</option>
+                        </select>
+                        <span class="ms-2 year-display">2025</span>
+                    </div>
                     <button id="prevBtn" class="nav-btn nav-btn-prev">
                         <i class="fas fa-chevron-left nav-icon"></i>
-                        <span>Anteriores</span>
+                        <span>Mês Anterior</span>
                     </button>
                     <button id="todayBtn" class="nav-btn nav-btn-today mx-2">
                         <i class="fas fa-calendar-day nav-icon"></i>
-                        <span>Hoje</span>
+                        <span>Mês Atual</span>
                     </button>
                     <button id="nextBtn" class="nav-btn nav-btn-next">
-                        <span>Próximos</span>
+                        <span>Próximo Mês</span>
                         <i class="fas fa-chevron-right nav-icon"></i>
                     </button>
                 </div>
@@ -211,8 +228,16 @@
         
         // Formatar período de datas
         function formatDateRange(startDate, endDate) {
-            // Ignorar valores recebidos e sempre retornar abril de 2025 formatado
-            return "01 ABR - 30 ABR 2025";
+            // Obter mês e ano da data de início
+            const [startDay, startMonthNum, startYear] = startDate.split('/').map(Number);
+            const [endDay, endMonthNum, endYear] = endDate.split('/').map(Number);
+            
+            // Mês abreviado em maiúsculas
+            const shortMonthNames = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 
+                                    'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+            
+            // Formatar conforme o padrão 01 MES - XX MES YYYY
+            return `01 ${shortMonthNames[startMonthNum-1]} - ${String(endDay).padStart(2, '0')} ${shortMonthNames[endMonthNum-1]} ${endYear}`;
         }
         
         // Atualizar contadores de status
@@ -353,9 +378,17 @@
         
         // Navegar para o mês anterior
         function goToPreviousMonth() {
-            // Forçar abril de 2025 (ignorar navegação)
-            currentMonth = 3; // Abril (índice 0-11)
-            currentYear = 2025;
+            // Não permitir mês menor que Janeiro
+            if (currentMonth > 0) {
+                currentMonth--;
+            } else {
+                // Se for Janeiro, volta para Dezembro do ano anterior
+                currentMonth = 11;
+                currentYear--;
+            }
+            
+            // Atualizar o seletor de mês visual
+            document.getElementById('monthSelector').value = currentMonth;
             
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
@@ -363,19 +396,30 @@
         
         // Navegar para o próximo mês
         function goToNextMonth() {
-            // Forçar abril de 2025 (ignorar navegação)
-            currentMonth = 3; // Abril (índice 0-11)
-            currentYear = 2025;
+            // Não permitir mês maior que Dezembro
+            if (currentMonth < 11) {
+                currentMonth++;
+            } else {
+                // Se for Dezembro, avança para Janeiro do próximo ano
+                currentMonth = 0;
+                currentYear++;
+            }
+            
+            // Atualizar o seletor de mês visual
+            document.getElementById('monthSelector').value = currentMonth;
             
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
         }
         
-        // Navegar para o mês atual (abril 2025)
+        // Navegar para o mês atual
         function goToCurrentMonth() {
-            // Forçar para abril de 2025 como o "mês atual" para o projeto
-            currentMonth = 3; // Abril (índice 0-11)
-            currentYear = 2025;
+            const today = new Date();
+            currentMonth = today.getMonth();
+            currentYear = today.getFullYear();
+            
+            // Atualizar o seletor de mês visual
+            document.getElementById('monthSelector').value = currentMonth;
             
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
@@ -397,20 +441,34 @@
             return diffDays + 1;
         }
         
+        // Obter dias no mês
+        function getDaysInMonth(year, month) {
+            // Array com o número de dias para cada mês (0-Janeiro, 1-Fevereiro, etc.)
+            // Fevereiro tem 28 dias, exceto em anos bissextos quando tem 29
+            const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            return daysInMonth[month];
+        }
+        
+        // Verificar se é ano bissexto
+        function isLeapYear(year) {
+            return ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0);
+        }
+        
         // Carregar o calendário por mês
         function loadCalendarByMonth(startDate) {
-            // Ignorar a data recebida e forçar abril de 2025
-            currentMonth = 3; // Abril (índice 0-11)
-            currentYear = 2025;
+            // Usar o mês e ano atuais selecionados
+            const monthIndex = currentMonth;
+            const year = currentYear;
             
-            // Definir o primeiro dia do mês de abril
-            const firstDayOfMonth = "01/04/2025";
+            // Definir o primeiro dia do mês selecionado
+            const firstDayOfMonth = `01/${String(monthIndex + 1).padStart(2, '0')}/${year}`;
             
-            // Definir o último dia do mês de abril
-            const endDate = "30/04/2025";
+            // Definir o último dia do mês selecionado
+            const lastDay = getDaysInMonth(year, monthIndex);
+            const endDate = `${String(lastDay).padStart(2, '0')}/${String(monthIndex + 1).padStart(2, '0')}/${year}`;
             
-            // Calcular quantos dias há no mês
-            const daysInMonth = getDaysInRange(firstDayOfMonth, endDate);
+            // Atualizar o ano na interface
+            document.querySelector('.year-display').textContent = year;
             
             // Carregar o calendário para o mês inteiro
             loadCalendar(firstDayOfMonth, endDate);

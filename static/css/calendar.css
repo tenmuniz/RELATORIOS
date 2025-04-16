@@ -570,3 +570,37 @@ body::before {
 ::-webkit-scrollbar-thumb:hover {
   background: #0D47A1;
 }
+
+/* Estilo para o seletor de mês */
+.month-selector-container {
+  display: flex;
+  align-items: center;
+  background-color: #f4f7fc;
+  border-radius: 8px;
+  padding: 5px 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.month-selector {
+  background-color: transparent;
+  border: none;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 5px;
+  width: auto;
+  cursor: pointer;
+  min-width: 130px;
+}
+
+.month-selector:focus {
+  box-shadow: none;
+  outline: none;
+  border: none;
+}
+
+.year-display {
+  font-weight: 600;
+  color: #3498db;
+  font-size: 0.95rem;
+}
