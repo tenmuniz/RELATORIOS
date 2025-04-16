@@ -117,14 +117,13 @@ class Report(db.Model):
         # Generate the calendar
         calendar = []
         
-        # Forçar a data de início como 1 de abril de 2025, independente dos parâmetros recebidos
-        current_date = datetime(2025, 4, 1)
+        # Usar a data de início recebida do usuário
+        current_date = start_date
         
-        # Forçar a data final como 30 de abril de 2025
-        end_date = datetime(2025, 4, 30)
+        # Calcular a data final com base nos dias solicitados
+        end_date = current_date + timedelta(days=days - 1)
         
-        # Limpar todos os dias para abril de 2025 diretamente
-        
+        # Iterar por todos os dias no intervalo
         while current_date <= end_date:
             date_str = current_date.strftime('%d/%m/%Y')
             
