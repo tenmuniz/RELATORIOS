@@ -159,6 +159,35 @@ function extractDataFromReport(text) {
   // Detectar armas de fogo - procurar padrões como "X armas de fogo", "X pistolas", "X revólveres"
   const firearmsMatch = normalizedText.match(/(\d+)\s*(armas?\s*de\s*fogo|pistolas?|revólveres?|espingardas?|fuzis?)/i);
   
+  // Detectar apreensão de drogas em unidades específicas (petecas, trouxas, porções, etc.)
+  // Cada unidade = 3g conforme regra solicitada
+  let drugsSeizedCount = 0;
+  
+  // Verificar drogas com medidas em gramas explicitamente
+  const drugsGramsMatch = normalizedText.match(/(\d+[.,]?\d*)\s*G(?:RAMAS?)?\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK)/i);
+  if (drugsGramsMatch) {
+    // Converter a string para número, substituindo vírgulas por pontos
+    drugsSeizedCount += parseFloat(drugsGramsMatch[1].replace(',', '.'));
+  }
+  
+  // Verificar drogas em unidades (petecas, trouxas, etc.)
+  const drugsUnitsPatterns = [
+    /(\d+)\s*(?:PETECAS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK)/i,
+    /(\d+)\s*(?:TROUXAS?|TROUXINHAS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK)/i,
+    /(\d+)\s*(?:PORÇÕES?|PEQUENAS?\s*PORÇÕES?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK)/i,
+    /(\d+)\s*(?:EMBALAGENS?|PEQUENAS?\s*EMBALAGENS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK)/i
+  ];
+  
+  // Para cada padrão, verificar e calcular
+  drugsUnitsPatterns.forEach(pattern => {
+    const match = normalizedText.match(pattern);
+    if (match) {
+      // Multiplicar o número de unidades por 3 para converter em gramas
+      const units = parseInt(match[1]);
+      drugsSeizedCount += units * 3;
+    }
+  });
+  
   // Extract occurrence
   const occurrenceMatch = normalizedText.match(/OCORRÊNCIA[^:]*:\s*(.+?)(?=\n|$)/i);
   let occurrence = 'Sem ocorrência relevante';
@@ -194,6 +223,7 @@ function extractDataFromReport(text) {
     bicycles: bicyclesCount,
     bladedWeapons: bladedWeaponsCount,
     firearms: firearmsCount,
+    drugsSeized: drugsSeizedCount,
     totalInspections,
     occurrence
   };
