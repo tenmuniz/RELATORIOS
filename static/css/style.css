@@ -188,49 +188,53 @@ textarea.form-control {
 }
 
 .stat-box.bg-primary {
-  background: linear-gradient(135deg, rgba(0, 116, 217, 0.8), rgba(32, 84, 147, 0.9)) !important;
+  background: linear-gradient(135deg, #1565C0, #0D47A1) !important;
   border: 1px solid rgba(127, 219, 255, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .stat-box.bg-primary .stat-value {
-  color: #E7F5FF;
+  color: #FFFFFF;
 }
 
 .stat-box.bg-success {
-  background: linear-gradient(135deg, rgba(46, 204, 113, 0.8), rgba(24, 129, 68, 0.9)) !important;
+  background: linear-gradient(135deg, #2E7D32, #1B5E20) !important;
   border: 1px solid rgba(46, 204, 113, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .stat-box.bg-success .stat-value {
-  color: #E3FCEF;
+  color: #FFFFFF;
 }
 
 .stat-box.bg-info {
-  background: linear-gradient(135deg, rgba(52, 152, 219, 0.8), rgba(24, 90, 157, 0.9)) !important;
+  background: linear-gradient(135deg, #0288D1, #01579B) !important;
   border: 1px solid rgba(52, 152, 219, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .stat-box.bg-info .stat-value {
-  color: #D4F1F9;
+  color: #FFFFFF;
 }
 
 .stat-box.bg-danger {
-  background: linear-gradient(135deg, rgba(231, 76, 60, 0.8), rgba(178, 34, 34, 0.9)) !important;
+  background: linear-gradient(135deg, #C62828, #B71C1C) !important;
   border: 1px solid rgba(231, 76, 60, 0.3);
-  animation: pulse 2s infinite alternate;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .stat-box.bg-danger .stat-value {
-  color: #FFE6E6;
+  color: #FFFFFF;
 }
 
 .stat-box.bg-warning {
-  background: linear-gradient(135deg, rgba(241, 196, 15, 0.8), rgba(230, 126, 34, 0.9)) !important;
+  background: linear-gradient(135deg, #F57F17, #E65100) !important;
   border: 1px solid rgba(241, 196, 15, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .stat-box.bg-warning .stat-value {
-  color: #FFFDE7;
+  color: #FFFFFF;
 }
 
 @keyframes pulse {
