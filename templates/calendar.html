@@ -232,7 +232,8 @@
                                     'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
             
             // Formatar conforme o padrão 01 MES - XX MES YYYY
-            return `01 ${shortMonthNames[startMonthNum-1]} - ${String(endDay).padStart(2, '0')} ${shortMonthNames[endMonthNum-1]} ${endYear}`;
+            // Usar o dia real da primeira data, não sempre "01"
+            return `${String(startDay).padStart(2, '0')} ${shortMonthNames[startMonthNum-1]} - ${String(endDay).padStart(2, '0')} ${shortMonthNames[endMonthNum-1]} ${endYear}`;
         }
         
         // Atualizar contadores de status
@@ -428,10 +429,16 @@
             
             // Obter o nome do mês abreviado em português
             const monthName = getMonthName(currentMonth);
+            const shortMonthNames = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 
+                                    'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
             
             // Atualizar o título do calendário no formato "01 MÊS - XX MÊS YYYY"
             const calendarTitle = `${firstDay} ${monthName} - ${lastDay} ${monthName} ${currentYear}`;
             document.querySelector('.calendar-title h2').textContent = calendarTitle;
+            
+            // Atualizar também o texto do span de período
+            const formattedRange = `${firstDay} ${shortMonthNames[currentMonth]} - ${lastDay} ${shortMonthNames[currentMonth]} ${currentYear}`;
+            document.getElementById('dateRangeDisplay').textContent = formattedRange;
             
             console.log(`Atualizando cabeçalho para: ${calendarTitle}`);
         }
