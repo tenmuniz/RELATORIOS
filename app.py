@@ -455,9 +455,11 @@ def get_reports_calendar():
         start_date = request.args.get("start_date")
         days_param = request.args.get("days", "0")
         
-        # Se nenhuma data foi fornecida, usar abril de 2025 como padrão
+        # Se nenhuma data foi fornecida, usar o mês atual como padrão
         if not start_date:
-            start_date = "01/04/2025"
+            # Usar a data atual
+            today = datetime.now()
+            start_date = f"01/{str(today.month).zfill(2)}/{today.year}"
         
         # Obter o dia, mês e ano da data inicial
         day, month, year = map(int, start_date.split("/"))
