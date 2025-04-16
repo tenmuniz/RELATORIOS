@@ -56,13 +56,19 @@ def analyze_police_report(report_text):
         - "Armas brancas" inclui facas, facões, canivetes, estiletes e objetos cortantes usados como arma.
         - "Armas de fogo" inclui revólveres, pistolas, espingardas, rifles e similares.
         - Para drogas apreendidas, SOMENTE registre se houver EXPLÍCITA menção às palavras "droga", "entorpecente", "maconha", 
-          "cocaína", "crack", ou outras substâncias ilícitas. Procure no texto menções claras como "x gramas de maconha", "apreensão de entorpecentes".
+          "cocaína", "crack", "oxi" ou outras substâncias ilícitas. Procure no texto menções claras como "x gramas de maconha", "apreensão de entorpecentes".
         - NÃO registre drogas se não houver menção clara e explícita a substâncias ilícitas no texto.
         - Se não houver qualquer menção a drogas ou entorpecentes, o valor deve ser ZERO.
         - IMPORTANTE SOBRE QUANTIDADES: Quando as drogas estiverem em formatos como "petecas", "trouxas", "trouxinhas", 
-          "pequenas embalagens", "porções", "pequenas porções" ou qualquer unidade similar que não seja em gramas, 
-          você deve multiplicar o número de unidades por 3 para converter em gramas. 
-          Exemplos: 1 peteca = 3g, 10 trouxas = 30g, 5 pequenas porções = 15g.
+          "pequenas embalagens", "porções", "pequenas porções", "papelotes", "pedras", "pacotes" ou qualquer unidade similar que não seja em gramas, 
+          você deve SEMPRE multiplicar o número de unidades por 3 para converter em gramas. Isso se aplica a QUALQUER tipo de droga mencionada.
+          Exemplos: 
+          * 1 peteca = 3g
+          * 10 trouxas = 30g
+          * 5 pequenas porções = 15g
+          * 39 pequenas embalagens de OXI = 117g
+          * 25 pequenas embalagens de cocaína = 75g
+          * Portanto, 39 embalagens de OXI + 25 embalagens de cocaína = 192g total
         - Leia o contexto para entender se realmente houve prisão/apreensão.
         
         Responda APENAS em formato JSON, seguindo exatamente esta estrutura:

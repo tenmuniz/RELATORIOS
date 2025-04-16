@@ -172,19 +172,30 @@ function extractDataFromReport(text) {
   
   // Verificar drogas em unidades (petecas, trouxas, etc.)
   const drugsUnitsPatterns = [
-    /(\d+)\s*(?:PETECAS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK)/i,
-    /(\d+)\s*(?:TROUXAS?|TROUXINHAS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK)/i,
-    /(\d+)\s*(?:PORÇÕES?|PEQUENAS?\s*PORÇÕES?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK)/i,
-    /(\d+)\s*(?:EMBALAGENS?|PEQUENAS?\s*EMBALAGENS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK)/i
+    /(\d+)\s*(?:PETECAS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK|OXI)/i,
+    /(\d+)\s*(?:TROUXAS?|TROUXINHAS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK|OXI)/i,
+    /(\d+)\s*(?:PORÇÕES?|PEQUENAS?\s*PORÇÕES?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK|OXI)/i,
+    /(\d+)\s*(?:EMBALAGENS?|PEQUENAS?\s*EMBALAGENS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK|OXI)/i,
+    /(\d+)\s*(?:PAPELOTES?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK|OXI)/i,
+    /(\d+)\s*(?:PEDRAS?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK|OXI)/i,
+    /(\d+)\s*(?:PACOTES?)\s*(?:DE\s*)?(?:DROGAS?|ENTORPECENTES?|MACONHA|COCAÍNA|CRACK|OXI)/i
   ];
   
   // Para cada padrão, verificar e calcular
+  // Usamos matchAll para encontrar TODAS as ocorrências, não apenas a primeira
   drugsUnitsPatterns.forEach(pattern => {
-    const match = normalizedText.match(pattern);
-    if (match) {
-      // Multiplicar o número de unidades por 3 para converter em gramas
-      const units = parseInt(match[1]);
-      drugsSeizedCount += units * 3;
+    // Usamos uma versão do padrão com a flag 'g' (global) para encontrar todas as ocorrências
+    const globalPattern = new RegExp(pattern.source, 'gi');
+    const matches = normalizedText.matchAll(globalPattern);
+    
+    // Processar todas as ocorrências encontradas
+    for (const match of matches) {
+      if (match && match[1]) {
+        // Multiplicar o número de unidades por 3 para converter em gramas
+        const units = parseInt(match[1]);
+        drugsSeizedCount += units * 3;
+        console.log(`Encontrado: ${match[0]}, Unidades: ${units}, Convertido: ${units * 3}g`);
+      }
     }
   });
   
