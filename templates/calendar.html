@@ -173,8 +173,8 @@
         // Formatar data para exibição em PT-BR
         function formatDateBR(dateString) {
             const [day, month, year] = dateString.split('/');
-            // Garantir que a data seja sempre correta para abril de 2025
-            const date = new Date(`2025-04-${day}`);
+            // Criar data com os valores recebidos
+            const date = new Date(`${year}-${month}-${day}`);
             
             // Obter nomes de dias e meses em português
             const dayNames = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
@@ -183,26 +183,21 @@
             const shortMonthNames = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 
                                     'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
             
-            // Tabela corrigida com os dias da semana para abril de 2025
-            const april2025DaysOfWeek = {
-                1: 'Terça-feira', 2: 'Quarta-feira', 3: 'Quinta-feira', 4: 'Sexta-feira', 5: 'Sábado', 6: 'Domingo',
-                7: 'Segunda-feira', 8: 'Terça-feira', 9: 'Quarta-feira', 10: 'Quinta-feira', 11: 'Sexta-feira', 12: 'Sábado',
-                13: 'Domingo', 14: 'Segunda-feira', 15: 'Terça-feira', 16: 'Quarta-feira', 17: 'Quinta-feira', 18: 'Sexta-feira',
-                19: 'Sábado', 20: 'Domingo', 21: 'Segunda-feira', 22: 'Terça-feira', 23: 'Quarta-feira', 24: 'Quinta-feira',
-                25: 'Sexta-feira', 26: 'Sábado', 27: 'Domingo', 28: 'Segunda-feira', 29: 'Terça-feira', 30: 'Quarta-feira'
-            };
+            // Calcular o dia da semana corretamente
+            const dayOfWeek = dayNames[date.getDay()];
             
-            // Usar o dia da semana a partir da tabela pré-calculada
-            const dayOfWeek = april2025DaysOfWeek[parseInt(day)] || dayNames[date.getDay()];
+            // Obter o nome do mês
+            const monthName = monthNames[parseInt(month) - 1];
+            const shortMonth = shortMonthNames[parseInt(month) - 1];
             
             return { 
                 weekday: dayOfWeek,
                 day: day,
-                month: 'Abril', // Sempre Abril
-                year: '2025',   // Sempre 2025
-                fullDate: `${day} de Abril de 2025`,
-                shortMonth: 'Abr',
-                shortMonthUpper: 'ABR'
+                month: monthName,
+                year: year,
+                fullDate: `${day} de ${monthName} de ${year}`,
+                shortMonth: shortMonth.toLowerCase().charAt(0).toUpperCase() + shortMonth.toLowerCase().slice(1),
+                shortMonthUpper: shortMonth
             };
         }
 
@@ -481,11 +476,15 @@
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('calendar').innerHTML = '';
             
-            // Ignorar as datas recebidas e forçar abril de 2025
-            currentMonth = 3; // Abril (índice 0-11)
-            currentYear = 2025;
-            startDate = "01/04/2025";
-            endDate = "30/04/2025";
+            // Usar as datas recebidas que já refletem o mês selecionado
+            // Não sobrescrever as variáveis startDate e endDate aqui
+            
+            // Atualizar o seletor de mês para refletir o mês atual
+            document.getElementById('monthSelector').value = currentMonth;
+            document.querySelector('.year-display').textContent = currentYear;
+            
+            // Determinar o nome do mês para mostrar na interface
+            const monthName = getMonthName(currentMonth);
             
             // Construir URL
             let url = `/api/calendar?start_date=${startDate}`;
@@ -574,11 +573,27 @@
             }
         });
 
-        // Carregar o calendário inicial (mês atual = abril 2025)
+        // Carregar o calendário inicial e configurar seletores
         document.addEventListener('DOMContentLoaded', () => {
-            // Forçar para o mês de abril de 2025 (mês 3, já que é indexado em 0)
+            // Configurar o mês inicial como abril de 2025 (mês 3, indexado em 0)
             currentMonth = 3; // Abril (índice 0-11)
             currentYear = 2025;
+            
+            // Configurar event listener para o seletor de mês
+            const monthSelector = document.getElementById('monthSelector');
+            monthSelector.value = currentMonth;
+            
+            // Quando o usuário mudar o mês no seletor
+            monthSelector.addEventListener('change', function() {
+                // Atualizar o mês atual
+                currentMonth = parseInt(this.value);
+                
+                // Carregar o calendário para o novo mês
+                const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
+                loadCalendarByMonth(firstDay);
+            });
+            
+            // Carregar o calendário inicial
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
         });
