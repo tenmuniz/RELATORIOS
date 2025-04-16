@@ -115,13 +115,21 @@ class PrintManager {
     // Estilo básico para a tabela principal
     const tableStyle = `
       <style>
+        #printContainer {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 10px 0;
+        }
+        
         .totals-table {
           width: 100%;
           border-collapse: collapse;
           font-family: Arial, sans-serif;
+          margin-bottom: 30px;
+          page-break-inside: avoid;
         }
         .totals-table th, .totals-table td {
-          border: 1px solid #ccc;
+          border: 1px solid #000;
           padding: 8px;
         }
         .totals-table th {
@@ -135,31 +143,33 @@ class PrintManager {
           background-color: #00335B;
           color: white;
           text-align: center;
-          padding: 10px;
+          padding: 8px;
           font-weight: bold;
+          font-size: 12pt;
         }
         .category-row th {
           background-color: #f2f2f2;
           text-align: center;
-          padding: 6px;
-        }
-        .total-cell {
-          background-color: #e6f7ff;
+          padding: 5px;
           font-weight: bold;
-          text-align: right;
         }
         .qty-cell {
           text-align: center;
+        }
+        .total-row td {
+          background-color: #e6f7ff;
+          font-weight: normal;
         }
         .page-break {
           page-break-after: always;
           height: 0;
           display: block;
+          clear: both;
         }
         .location-title {
-          margin-top: 20px;
-          margin-bottom: 10px;
-          font-size: 18px;
+          margin-top: 15px;
+          margin-bottom: 8px;
+          font-size: 14pt;
           font-weight: bold;
           color: #333;
           text-align: center;
@@ -169,6 +179,14 @@ class PrintManager {
           padding: 20px;
           font-size: 16px;
           color: #666;
+        }
+        h2 {
+          color: #00335B;
+          margin-top: 10px;
+          margin-bottom: 20px;
+          font-size: 16pt;
+          text-align: center;
+          font-weight: bold;
         }
       </style>
     `;
@@ -202,9 +220,9 @@ class PrintManager {
         <td>Bicicletas</td>
         <td class="qty-cell">${document.getElementById('totalBicyclesValue').textContent || '0'}</td>
       </tr>
-      <tr>
+      <tr class="total-row">
         <td colspan="3" style="text-align: right">Total de Abordagens:</td>
-        <td class="qty-cell" style="background-color: #e6f7ff;">${document.getElementById('grandTotalValue').textContent || '0'}</td>
+        <td class="qty-cell">${document.getElementById('grandTotalValue').textContent || '0'}</td>
       </tr>
       <tr class="category-row">
         <th colspan="4">Prisões e Capturas</th>
@@ -222,7 +240,7 @@ class PrintManager {
         <td>Motos Apreendidas</td>
         <td class="qty-cell">${document.getElementById('totalSeizedMotorcyclesValue').textContent || '0'}</td>
         <td>Drogas Apreendidas</td>
-        <td class="qty-cell">${document.getElementById('totalDrugsSeizedValue').textContent || '0'}</td>
+        <td class="qty-cell">${document.getElementById('totalDrugsSeizedValue').textContent || '0'} g</td>
       </tr>
       <tr>
         <td>Armas Brancas</td>
@@ -311,9 +329,9 @@ class PrintManager {
           <td>Bicicletas</td>
           <td class="qty-cell">${locationData.bicycles || 0}</td>
         </tr>
-        <tr>
+        <tr class="total-row">
           <td colspan="3" style="text-align: right">Total de Abordagens:</td>
-          <td class="qty-cell" style="background-color: #e6f7ff;">${locationData.total_inspections || 0}</td>
+          <td class="qty-cell">${locationData.total_inspections || 0}</td>
         </tr>
         <tr class="category-row">
           <th colspan="4">Prisões e Capturas</th>
@@ -339,9 +357,9 @@ class PrintManager {
           <td>Armas de Fogo</td>
           <td class="qty-cell">${locationData.firearms || 0}</td>
         </tr>
-        <tr>
+        <tr class="total-row">
           <td colspan="3" style="text-align: right">Total de Relatórios:</td>
-          <td class="qty-cell" style="background-color: #e6f7ff;">${locationData.reports_count || 0}</td>
+          <td class="qty-cell">${locationData.reports_count || 0}</td>
         </tr>
       `;
       

@@ -4,21 +4,23 @@
     -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
     color-adjust: exact !important; /* Firefox */
     print-color-adjust: exact !important;
+    box-sizing: border-box !important;
   }
   
   @page {
-    size: A4;
-    margin: 1cm;
+    size: A4 portrait;
+    margin: 0.8cm;
   }
   
   html, body {
-    width: 210mm;
-    height: 297mm;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     background: white !important;
-    font-family: 'Roboto', Arial, sans-serif !important;
+    font-family: Arial, sans-serif !important;
     color: black !important;
+    font-size: 11pt !important;
   }
   
   /* Esconder TUDO exceto o container de impressão */
