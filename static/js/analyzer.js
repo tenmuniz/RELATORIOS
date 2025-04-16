@@ -243,7 +243,16 @@ function displayResults(results, totals) {
   if (document.getElementById('drugsSeizedValue')) {
     // Formatar o valor de drogas para exibir em gramas com uma casa decimal
     const drugsValue = results.drugsSeized || 0;
-    updateValueWithAnimation('drugsSeizedValue', drugsValue.toFixed(1));
+    // Converter para kg se for maior que 999g (quase 1kg)
+    let displayValue = '';
+    if (drugsValue >= 999) {
+      // Converter para kg e mostrar com até 3 casas decimais
+      displayValue = (drugsValue / 1000).toFixed(3) + ' kg';
+    } else {
+      // Manter em gramas com uma casa decimal
+      displayValue = drugsValue.toFixed(1) + ' g';
+    }
+    updateValueWithAnimation('drugsSeizedValue', displayValue);
   }
   
   if (document.getElementById('fugitivesValue')) {
