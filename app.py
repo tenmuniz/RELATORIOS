@@ -13,11 +13,31 @@ app.secret_key = os.environ.get("SESSION_SECRET")
 
 # Configure database
 database_url = os.environ.get("DATABASE_URL")
+
+# Fallback para ambiente de desenvolvimento/teste quando não há DATABASE_URL
+if not database_url:
+    # Para Railway que não define DATABASE_URL imediatamente
+    postgres_host = os.environ.get("PGHOST")
+    postgres_db = os.environ.get("PGDATABASE")
+    postgres_user = os.environ.get("PGUSER")
+    postgres_password = os.environ.get("PGPASSWORD")
+    postgres_port = os.environ.get("PGPORT", "5432")
+    
+    if postgres_host and postgres_db and postgres_user and postgres_password:
+        # Construir manualmente a URL se tivermos todas as partes
+        database_url = f"postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_db}"
+        logging.info("Construindo DATABASE_URL a partir de variáveis PGHOST, etc.")
+    else:
+        # Fallback para SQLite em memória (apenas para testes)
+        database_url = "sqlite:///dev.db"
+        logging.warning("!!! USANDO BANCO DE DADOS SQLITE LOCAL APENAS PARA TESTES !!!")
+
 # Correção para URLs postgres:// vs postgresql:// (necessário para algumas versões do SQLAlchemy)
 if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+logging.info(f"Usando string de conexão: {database_url[:10]}...{database_url[-5:] if len(database_url) > 15 else ''}")
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
