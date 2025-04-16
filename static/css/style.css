@@ -114,6 +114,11 @@ body {
   padding: 20px;
 }
 
+/* Posicionamento relativo para o container da textarea */
+.report-textarea-container {
+  position: relative;
+}
+
 textarea.form-control {
   background-color: rgba(255, 255, 255, 0.9);
   color: #333;
@@ -124,6 +129,42 @@ textarea.form-control {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   min-height: 200px;
   resize: vertical;
+  padding-right: 50px; /* Espaço para o botão de colar */
+}
+
+/* Botão de colagem rápida */
+.quick-paste-btn {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  background-color: var(--primary-light);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.quick-paste-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  background-color: var(--accent-blue);
+}
+
+.quick-paste-btn:active {
+  transform: scale(0.95);
+}
+
+.quick-paste-btn i {
+  font-size: 18px;
 }
 
 .btn-primary {

@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupEventListeners() {
   const analyzeButton = document.getElementById('analyzeButton');
   const clearButton = document.getElementById('clearButton');
+  const pasteButton = document.getElementById('pasteButton');
   
   if (analyzeButton) {
     analyzeButton.addEventListener('click', analyzeReport);
@@ -42,6 +43,10 @@ function setupEventListeners() {
   
   if (clearButton) {
     clearButton.addEventListener('click', clearForm);
+  }
+  
+  if (pasteButton) {
+    pasteButton.addEventListener('click', handleQuickPaste);
   }
 }
 
