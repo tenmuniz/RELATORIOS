@@ -64,172 +64,111 @@ class PrintManager {
    * @param {HTMLElement} container - Container para o relatório
    */
   generateTotalsReport(container) {
-    // Mês atual (Abril 2025)
-    const currentMonth = "ABRIL";
-    const currentYear = "2025";
-    
-    // Cabeçalho com logo institucional
-    container.innerHTML = `
-      <div class="print-header">
-        ${this.logoSVG}
-        <h1 class="print-title">POLÍCIA MILITAR DO PARÁ</h1>
-        <h2 class="print-subtitle">20ª COMPANHIA INDEPENDENTE DE POLÍCIA MILITAR</h2>
-        <p>TOTAIS ACUMULADOS - ${currentMonth} ${currentYear}</p>
-      </div>
+    // Tabela simples com todos os totais acumulados
+    // Estilo básico para a tabela principal
+    const tableStyle = `
+      <style>
+        .totals-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-family: Arial, sans-serif;
+        }
+        .totals-table th, .totals-table td {
+          border: 1px solid #ccc;
+          padding: 8px;
+        }
+        .totals-table th {
+          background-color: #f2f2f2;
+          text-align: left;
+        }
+        .totals-table tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+        .header-row th {
+          background-color: #00335B;
+          color: white;
+          text-align: center;
+          padding: 10px;
+          font-weight: bold;
+        }
+        .category-row th {
+          background-color: #f2f2f2;
+          text-align: center;
+          padding: 6px;
+        }
+        .total-cell {
+          background-color: #e6f7ff;
+          font-weight: bold;
+          text-align: right;
+        }
+        .qty-cell {
+          text-align: center;
+        }
+      </style>
     `;
     
-    // Data do relatório
-    const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('pt-BR');
+    const table = document.createElement('table');
+    table.className = 'totals-table';
     
-    // Informações básicas do relatório
-    const reportInfo = document.createElement('div');
-    reportInfo.className = 'print-report-info';
-    reportInfo.style.marginBottom = '25px';
-    reportInfo.innerHTML = `
-      <div style="width: 100%; text-align: right; font-weight: bold;">
-        Data de Emissão: ${formattedDate}<br>
-        Total de Relatórios no Mês: ${document.getElementById('reportsCountValue').textContent || '0'}
-      </div>
-    `;
-    container.appendChild(reportInfo);
-    
-    // Tabela principal com todos os totais acumulados
-    const statsTable = document.createElement('table');
-    statsTable.className = 'print-detail-table';
-    statsTable.style.width = '100%';
-    statsTable.style.marginBottom = '30px';
-    
-    // Cabeçalho da tabela
-    statsTable.innerHTML = `
-      <tr>
-        <th colspan="4" style="font-size: 18px; text-align: center; background-color: #003366 !important; color: white !important; padding: 10px;">
-          TOTAIS ACUMULADOS - PRODUTIVIDADE OPERACIONAL
-        </th>
+    // Construir a tabela exatamente como na imagem
+    table.innerHTML = `
+      <tr class="header-row">
+        <th colspan="4">TOTAIS ACUMULADOS - PRODUTIVIDADE OPERACIONAL</th>
+      </tr>
+      <tr class="category-row">
+        <th colspan="4">Abordagens e Inspeções</th>
       </tr>
       <tr>
-        <th colspan="4" style="text-align: center; background-color: #f0f0f0 !important;">
-          Abordagens e Inspeções
-        </th>
+        <th>Indicador</th>
+        <th>Quantidade</th>
+        <th>Indicador</th>
+        <th>Quantidade</th>
       </tr>
       <tr>
-        <th style="width: 25%">Indicador</th>
-        <th style="width: 25%">Quantidade</th>
-        <th style="width: 25%">Indicador</th>
-        <th style="width: 25%">Quantidade</th>
+        <td>Pessoas a Pé</td>
+        <td class="qty-cell">${document.getElementById('totalPeopleValue').textContent || '0'}</td>
+        <td>Motocicletas</td>
+        <td class="qty-cell">${document.getElementById('totalMotorcyclesValue').textContent || '0'}</td>
       </tr>
       <tr>
-        <td><strong>Pessoas a Pé</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalPeopleValue').textContent || '0'}</td>
-        <td><strong>Motocicletas</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalMotorcyclesValue').textContent || '0'}</td>
+        <td>Carros</td>
+        <td class="qty-cell">${document.getElementById('totalCarsValue').textContent || '0'}</td>
+        <td>Bicicletas</td>
+        <td class="qty-cell">${document.getElementById('totalBicyclesValue').textContent || '0'}</td>
       </tr>
       <tr>
-        <td><strong>Carros</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalCarsValue').textContent || '0'}</td>
-        <td><strong>Bicicletas</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalBicyclesValue').textContent || '0'}</td>
+        <td colspan="3" style="text-align: right">Total de Abordagens:</td>
+        <td class="qty-cell" style="background-color: #e6f7ff;">${document.getElementById('grandTotalValue').textContent || '0'}</td>
+      </tr>
+      <tr class="category-row">
+        <th colspan="4">Prisões e Capturas</th>
       </tr>
       <tr>
-        <td colspan="3" style="text-align: right; padding-right: 20px;"><strong>Total de Abordagens:</strong></td>
-        <td style="text-align: center; font-weight: bold; font-size: 16px; background-color: #e6f7ff !important;">
-          ${document.getElementById('grandTotalValue').textContent || '0'}
-        </td>
+        <td>Prisões Realizadas</td>
+        <td class="qty-cell">${document.getElementById('totalArrestsValue').textContent || '0'}</td>
+        <td>Foragidos Capturados</td>
+        <td class="qty-cell">${document.getElementById('totalFugitivesValue').textContent || '0'}</td>
       </tr>
-      
-      <tr>
-        <th colspan="4" style="text-align: center; background-color: #f0f0f0 !important;">
-          Prisões e Capturas
-        </th>
+      <tr class="category-row">
+        <th colspan="4">Apreensões</th>
       </tr>
       <tr>
-        <td><strong>Prisões Realizadas</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalArrestsValue').textContent || '0'}</td>
-        <td><strong>Foragidos Capturados</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalFugitivesValue').textContent || '0'}</td>
-      </tr>
-      
-      <tr>
-        <th colspan="4" style="text-align: center; background-color: #f0f0f0 !important;">
-          Apreensões
-        </th>
+        <td>Motos Apreendidas</td>
+        <td class="qty-cell">${document.getElementById('totalSeizedMotorcyclesValue').textContent || '0'}</td>
+        <td>Drogas Apreendidas</td>
+        <td class="qty-cell">${document.getElementById('totalDrugsSeizedValue').textContent || '0'} g</td>
       </tr>
       <tr>
-        <td><strong>Motos Apreendidas</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalSeizedMotorcyclesValue').textContent || '0'}</td>
-        <td><strong>Drogas Apreendidas</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalDrugsSeizedValue').textContent || '0'}</td>
-      </tr>
-      <tr>
-        <td><strong>Armas Brancas</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalBladedWeaponsValue').textContent || '0'}</td>
-        <td><strong>Armas de Fogo</strong></td>
-        <td style="text-align: center; font-weight: bold;">${document.getElementById('totalFirearmsValue').textContent || '0'}</td>
+        <td>Armas Brancas</td>
+        <td class="qty-cell">${document.getElementById('totalBladedWeaponsValue').textContent || '0'}</td>
+        <td>Armas de Fogo</td>
+        <td class="qty-cell">${document.getElementById('totalFirearmsValue').textContent || '0'}</td>
       </tr>
     `;
-    container.appendChild(statsTable);
     
-    // Adicionar gráfico simples de barras horizontais com caracteres
-    const chartContainer = document.createElement('div');
-    chartContainer.className = 'print-chart-container';
-    chartContainer.style.marginTop = '30px';
-    chartContainer.style.marginBottom = '30px';
-    chartContainer.innerHTML = `
-      <h3 style="text-align: center; margin-bottom: 15px;">Proporção de Abordagens</h3>
-      <table class="print-detail-table" style="width: 100%;">
-        <tr>
-          <th style="width: 20%;">Tipo</th>
-          <th style="width: 15%;">Quantidade</th>
-          <th style="width: 65%;">Proporção</th>
-        </tr>
-        <tr>
-          <td>Pessoas</td>
-          <td style="text-align: center;">${document.getElementById('totalPeopleValue').textContent || '0'}</td>
-          <td>${this.generateBarChart(parseInt(document.getElementById('totalPeopleValue').textContent || '0'), parseInt(document.getElementById('grandTotalValue').textContent || '1'))}</td>
-        </tr>
-        <tr>
-          <td>Motos</td>
-          <td style="text-align: center;">${document.getElementById('totalMotorcyclesValue').textContent || '0'}</td>
-          <td>${this.generateBarChart(parseInt(document.getElementById('totalMotorcyclesValue').textContent || '0'), parseInt(document.getElementById('grandTotalValue').textContent || '1'))}</td>
-        </tr>
-        <tr>
-          <td>Carros</td>
-          <td style="text-align: center;">${document.getElementById('totalCarsValue').textContent || '0'}</td>
-          <td>${this.generateBarChart(parseInt(document.getElementById('totalCarsValue').textContent || '0'), parseInt(document.getElementById('grandTotalValue').textContent || '1'))}</td>
-        </tr>
-        <tr>
-          <td>Bicicletas</td>
-          <td style="text-align: center;">${document.getElementById('totalBicyclesValue').textContent || '0'}</td>
-          <td>${this.generateBarChart(parseInt(document.getElementById('totalBicyclesValue').textContent || '0'), parseInt(document.getElementById('grandTotalValue').textContent || '1'))}</td>
-        </tr>
-      </table>
-    `;
-    container.appendChild(chartContainer);
-    
-    // Assinaturas
-    const signaturesTable = document.createElement('div');
-    signaturesTable.className = 'print-signatures';
-    signaturesTable.style.marginTop = '50px';
-    signaturesTable.innerHTML = `
-      <div class="print-signature">
-        <div class="print-signature-line">Responsável pelo Relatório</div>
-      </div>
-      <div class="print-signature">
-        <div class="print-signature-line">Comandante da 20ª CIPM</div>
-      </div>
-    `;
-    container.appendChild(signaturesTable);
-    
-    // Rodapé
-    const formattedTime = currentDate.toLocaleTimeString('pt-BR');
-    
-    const footer = document.createElement('div');
-    footer.className = 'print-footer';
-    footer.innerHTML = `
-      <div>Sistema de Análise de Produtividade | 20ª CIPM © 2023-2025</div>
-      <div class="print-datetime">Documento gerado em: ${formattedDate} às ${formattedTime}</div>
-    `;
-    container.appendChild(footer);
+    // Adicionar estilos e tabela ao container
+    container.innerHTML = tableStyle;
+    container.appendChild(table);
   }
 
 
