@@ -155,15 +155,16 @@ textarea.form-control {
 
 .stat-box {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.2));
-  border-radius: 12px;
-  padding: 18px 10px;
-  margin-bottom: 18px;
+  border-radius: 8px;
+  padding: 12px 8px;
+  margin-bottom: 15px;
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
+  height: calc(100% - 15px);
 }
 
 .stat-box:before {
@@ -178,8 +179,8 @@ textarea.form-control {
 }
 
 .stat-box:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
 .stat-box.bg-primary {
@@ -221,7 +222,7 @@ textarea.form-control {
 }
 
 .stat-value {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--accent-yellow);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -234,13 +235,13 @@ textarea.form-control {
 
 .stat-label {
   color: var(--accent-blue-light);
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   font-weight: 500;
   position: relative;
   display: inline-block;
-  padding: 0 5px;
+  padding: 0 3px;
 }
 
 .badge-location {
