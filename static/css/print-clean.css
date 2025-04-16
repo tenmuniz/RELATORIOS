@@ -1,17 +1,73 @@
 @media print {
-  /* Esconder elementos específicos para impressão */
+  /* Remover qualquer formatação extra que possa aparecer na impressão */
   .statistics-section,
   .occurrence-section,
   .signatures,
   .print-date,
   .print-footer,
-  h3, h2, h1,
   table.statistics-table {
     display: none !important;
   }
   
-  /* Garantir que apenas os elementos básicos da página sejam exibidos */
-  body * {
-    visibility: visible;
+  /* Garantir que apenas os elementos visuais importantes são exibidos */
+  body {
+    background: white !important;
+    color: black !important;
+    font-family: Arial, sans-serif !important;
+  }
+  
+  /* Esconder elementos desnecessários na impressão */
+  header, 
+  footer,
+  nav,
+  .btn,
+  #reportText,
+  .error-message,
+  .loader {
+    display: none !important;
+  }
+  
+  /* Garantir que textos sejam pretos, não brancos ou coloridos */
+  h1, h2, h3, h4, h5, p, div, span {
+    color: black !important;
+    text-shadow: none !important;
+  }
+  
+  /* Formatar estatísticas para impressão */
+  .stat-box {
+    background: none !important;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .stat-value {
+    color: black !important;
+    -webkit-text-fill-color: black !important;
+    text-shadow: none !important;
+  }
+  
+  .stat-label {
+    color: #555 !important;
+  }
+  
+  /* Remover estilos de fundo das estatísticas */
+  .bg-primary, .bg-success, .bg-info, .bg-warning, .bg-danger {
+    background: none !important;
+    background-color: white !important;
+  }
+  
+  /* Formatar cartões */
+  .card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    background: white !important;
+    break-inside: avoid !important;
+  }
+  
+  .card-header {
+    background-color: #f8f8f8 !important;
+    color: black !important;
+    border-bottom: 1px solid #ddd !important;
   }
 }
