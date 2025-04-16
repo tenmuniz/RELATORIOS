@@ -489,6 +489,76 @@ def get_reports_calendar():
         logging.error(f"Error getting reports calendar: {str(e)}")
         return jsonify({"error": f"Ocorreu um erro ao obter o calendário de relatórios: {str(e)}"}), 500
 
+@app.route("/api/reports-by-location", methods=["GET"])
+def get_reports_by_location():
+    """API endpoint para obter relatórios separados por localização"""
+    try:
+        reports = Report.query.all()
+        
+        # Inicializar dicionários para cada localidade
+        locations = {}
+        
+        # Processar cada relatório e separá-los por localidade
+        for report in reports:
+            if report.location not in locations:
+                locations[report.location] = {
+                    'people': 0,
+                    'motorcycles': 0,
+                    'cars': 0,
+                    'bicycles': 0,
+                    'arrests': 0,
+                    'seized_motorcycles': 0,
+                    'drugs_seized': 0,
+                    'fugitives': 0,
+                    'bladed_weapons': 0,
+                    'firearms': 0,
+                    'total_inspections': 0,
+                    'reports_count': 0
+                }
+            
+            # Adicionar contagens ao local específico
+            locations[report.location]['people'] += report.people_count
+            locations[report.location]['motorcycles'] += report.motorcycles_count
+            locations[report.location]['cars'] += report.cars_count
+            locations[report.location]['bicycles'] += report.bicycles_count
+            locations[report.location]['arrests'] += report.arrests_count
+            locations[report.location]['seized_motorcycles'] += report.seized_motorcycles_count
+            locations[report.location]['drugs_seized'] += report.drugs_seized_count
+            locations[report.location]['fugitives'] += report.fugitives_count
+            locations[report.location]['bladed_weapons'] += report.bladed_weapons_count
+            locations[report.location]['firearms'] += report.firearms_count
+            locations[report.location]['total_inspections'] += report.total_inspections()
+            locations[report.location]['reports_count'] += 1
+        
+        # Obter também os totais gerais
+        all_totals = {
+            'people': sum(loc['people'] for loc in locations.values()),
+            'motorcycles': sum(loc['motorcycles'] for loc in locations.values()),
+            'cars': sum(loc['cars'] for loc in locations.values()),
+            'bicycles': sum(loc['bicycles'] for loc in locations.values()),
+            'arrests': sum(loc['arrests'] for loc in locations.values()),
+            'seized_motorcycles': sum(loc['seized_motorcycles'] for loc in locations.values()),
+            'drugs_seized': sum(loc['drugs_seized'] for loc in locations.values()),
+            'fugitives': sum(loc['fugitives'] for loc in locations.values()),
+            'bladed_weapons': sum(loc['bladed_weapons'] for loc in locations.values()),
+            'firearms': sum(loc['firearms'] for loc in locations.values()),
+            'total_inspections': sum(loc['total_inspections'] for loc in locations.values()),
+            'reports_count': sum(loc['reports_count'] for loc in locations.values())
+        }
+        
+        return jsonify({
+            'success': True,
+            'locations': locations,
+            'totals': all_totals
+        })
+        
+    except Exception as e:
+        logging.error(f"Erro ao obter relatórios por localização: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 # Run the app
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
