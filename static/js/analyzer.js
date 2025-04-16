@@ -370,7 +370,16 @@ function loadTotals() {
       if (document.getElementById('totalDrugsSeizedValue')) {
         // Formatar o valor de drogas para exibir em gramas com uma casa decimal
         const drugsValue = data.totals.drugsSeized || 0;
-        document.getElementById('totalDrugsSeizedValue').textContent = drugsValue.toFixed(1);
+        // Converter para kg se for maior que 999g (quase 1kg)
+        let displayValue = '';
+        if (drugsValue >= 999) {
+          // Converter para kg e mostrar com até 3 casas decimais
+          displayValue = (drugsValue / 1000).toFixed(3) + ' kg';
+        } else {
+          // Manter em gramas com uma casa decimal
+          displayValue = drugsValue.toFixed(1) + ' g';
+        }
+        document.getElementById('totalDrugsSeizedValue').textContent = displayValue;
       }
       
       if (document.getElementById('totalFugitivesValue')) {
@@ -488,7 +497,16 @@ function deleteLastReport() {
         
         if (document.getElementById('totalDrugsSeizedValue')) {
           const drugsValue = data.totals.drugsSeized || 0;
-          document.getElementById('totalDrugsSeizedValue').textContent = drugsValue.toFixed(1);
+          // Converter para kg se for maior que 999g (quase 1kg)
+          let displayValue = '';
+          if (drugsValue >= 999) {
+            // Converter para kg e mostrar com até 3 casas decimais
+            displayValue = (drugsValue / 1000).toFixed(3) + ' kg';
+          } else {
+            // Manter em gramas com uma casa decimal
+            displayValue = drugsValue.toFixed(1) + ' g';
+          }
+          document.getElementById('totalDrugsSeizedValue').textContent = displayValue;
         }
         
         if (document.getElementById('totalFugitivesValue')) {
@@ -562,7 +580,7 @@ function resetDatabase() {
       }
       
       if (document.getElementById('totalDrugsSeizedValue')) {
-        document.getElementById('totalDrugsSeizedValue').textContent = '0.0';
+        document.getElementById('totalDrugsSeizedValue').textContent = '0.0 g';
       }
       
       if (document.getElementById('totalFugitivesValue')) {
@@ -593,7 +611,7 @@ function resetDatabase() {
       }
       
       if (document.getElementById('drugsSeizedValue')) {
-        document.getElementById('drugsSeizedValue').textContent = '0.0';
+        document.getElementById('drugsSeizedValue').textContent = '0.0 g';
       }
       
       if (document.getElementById('fugitivesValue')) {
