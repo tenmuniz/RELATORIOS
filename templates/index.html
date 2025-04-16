@@ -260,22 +260,9 @@ OCORRÊNCIA: Descrição da ocorrência..."></textarea>
             
             <!-- Action Buttons -->
             <div class="mt-4 text-center">
-              <div class="btn-group dropup mb-3">
-                <button id="printReportButton" class="btn btn-primary">
-                  <i class="fas fa-print me-2"></i>Imprimir Relatório
-                </button>
-                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#" id="printPDFButton">
-                    <i class="fas fa-file-pdf me-2"></i>Totais Acumulados
-                  </a></li>
-                  <li><a class="dropdown-item" href="#" id="printFullButton">
-                    <i class="fas fa-file-alt me-2"></i>Relatório Completo
-                  </a></li>
-                </ul>
-              </div>
+              <button id="printReportButton" class="btn btn-primary mb-3">
+                <i class="fas fa-print me-2"></i>Imprimir Totais Acumulados
+              </button>
               <button class="btn btn-warning ms-3" onclick="deleteLastReport()">
                 <i class="fas fa-undo me-2"></i>Excluir Último Relatório
               </button>
