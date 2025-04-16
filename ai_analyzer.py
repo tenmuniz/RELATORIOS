@@ -59,6 +59,10 @@ def analyze_police_report(report_text):
           "cocaína", "crack", ou outras substâncias ilícitas. Procure no texto menções claras como "x gramas de maconha", "apreensão de entorpecentes".
         - NÃO registre drogas se não houver menção clara e explícita a substâncias ilícitas no texto.
         - Se não houver qualquer menção a drogas ou entorpecentes, o valor deve ser ZERO.
+        - IMPORTANTE SOBRE QUANTIDADES: Quando as drogas estiverem em formatos como "petecas", "trouxas", "trouxinhas", 
+          "pequenas embalagens", "porções", "pequenas porções" ou qualquer unidade similar que não seja em gramas, 
+          você deve multiplicar o número de unidades por 3 para converter em gramas. 
+          Exemplos: 1 peteca = 3g, 10 trouxas = 30g, 5 pequenas porções = 15g.
         - Leia o contexto para entender se realmente houve prisão/apreensão.
         
         Responda APENAS em formato JSON, seguindo exatamente esta estrutura:
