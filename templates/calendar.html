@@ -41,8 +41,8 @@
     <main class="container">
         <div class="calendar-container animate__animated animate__fadeIn">
             <!-- Title Section -->
-            <div class="mb-4">
-                <h2 class="calendar-title">Calendário de Produtividade</h2>
+            <div class="mb-4 calendar-title">
+                <h2>Calendário de Produtividade</h2>
                 <p class="calendar-subtitle">Monitore os relatórios enviados e pendentes para cada dia, local e turno</p>
             </div>
 
@@ -385,6 +385,9 @@
             // Atualizar o seletor de mês visual
             document.getElementById('monthSelector').value = currentMonth;
             
+            // Atualizar título do calendário
+            updateCalendarHeader();
+            
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
         }
@@ -403,8 +406,34 @@
             // Atualizar o seletor de mês visual
             document.getElementById('monthSelector').value = currentMonth;
             
+            // Atualizar título do calendário
+            updateCalendarHeader();
+            
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
+        }
+        
+        // Função para atualizar o cabeçalho do calendário
+        function updateCalendarHeader() {
+            // Atualizar o ano
+            document.querySelector('.year-display').textContent = currentYear;
+            
+            // Obter o primeiro e último dia do mês
+            const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth);
+            const lastDayOfMonth = getLastDayOfMonth(currentYear, currentMonth);
+            
+            // Extrair apenas os dias do formato DD/MM/YYYY
+            const firstDay = firstDayOfMonth.split('/')[0];
+            const lastDay = lastDayOfMonth.split('/')[0];
+            
+            // Obter o nome do mês abreviado em português
+            const monthName = getMonthName(currentMonth);
+            
+            // Atualizar o título do calendário no formato "01 MÊS - XX MÊS YYYY"
+            const calendarTitle = `${firstDay} ${monthName} - ${lastDay} ${monthName} ${currentYear}`;
+            document.querySelector('.calendar-title h2').textContent = calendarTitle;
+            
+            console.log(`Atualizando cabeçalho para: ${calendarTitle}`);
         }
         
         // Navegar para o mês atual
@@ -415,6 +444,9 @@
             
             // Atualizar o seletor de mês visual
             document.getElementById('monthSelector').value = currentMonth;
+            
+            // Atualizar título do calendário
+            updateCalendarHeader();
             
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
             loadCalendarByMonth(firstDay);
@@ -464,6 +496,13 @@
             
             // Atualizar o ano na interface
             document.querySelector('.year-display').textContent = year;
+            
+            // Mostrar o nome do mês no console para debug
+            const monthName = getMonthName(monthIndex);
+            console.log(`Mês atual: ${monthName} (${monthIndex + 1}), Ano: ${year}`);
+            
+            // Atualizar título do calendário
+            updateCalendarHeader();
             
             // Carregar o calendário para o mês inteiro
             loadCalendar(firstDayOfMonth, endDate);
@@ -591,10 +630,16 @@
                 // Atualizar o mês atual
                 currentMonth = parseInt(this.value);
                 
+                // Atualizar título do calendário
+                updateCalendarHeader();
+                
                 // Carregar o calendário para o novo mês
                 const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
                 loadCalendarByMonth(firstDay);
             });
+            
+            // Inicializar o título do calendário
+            updateCalendarHeader();
             
             // Carregar o calendário inicial
             const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
