@@ -10,8 +10,14 @@ from openai import OpenAI
 api_key = os.environ.get("OPENAI_API_KEY")
 if not api_key:
     logging.error("OPENAI_API_KEY environment variable is not set")
-    
-client = OpenAI(api_key=api_key)
+    raise ValueError("OPENAI_API_KEY environment variable must be set to use AI analysis")
+
+# Inicializar cliente com retry em caso de problemas temporários de conexão
+client = OpenAI(
+    api_key=api_key,
+    timeout=60.0,  # Timeout maior para ambientes de cloud
+    max_retries=3  # Retry em caso de problemas de conexão
+)
 
 def analyze_police_report(report_text):
     """

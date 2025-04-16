@@ -1,0 +1,42 @@
+# Arquivos de bytecode Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos de ambiente e configuração local
+.env
+.env.local
+.env.*.local
+.flaskenv
+venv/
+env/
+ENV/
+
+# Arquivos de banco de dados SQLite
+*.sqlite
+*.sqlite3
+*.db
+
+# Arquivos de log
+*.log
+logs/
+
+# Diretórios de build e cache
+build/
+dist/
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Arquivos temporários
+*.swp
+*~
+.DS_Store
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
