@@ -35,6 +35,34 @@
   .print-only {
     display: block !important;
   }
+  
+  /* Suporte para quebra de página */
+  .page-break {
+    page-break-after: always !important;
+    display: block !important;
+    height: 0 !important;
+    clear: both !important;
+  }
+  
+  /* Estilo para títulos de relatório */
+  h2 {
+    color: #00335B !important;
+    margin-top: 20px !important;
+    margin-bottom: 15px !important;
+    font-size: 18pt !important;
+    text-align: center !important;
+  }
+  
+  /* Estilo para títulos de localidade */
+  .location-title {
+    color: #333 !important;
+    margin-top: 15px !important;
+    margin-bottom: 10px !important;
+    font-size: 14pt !important;
+    font-weight: bold !important;
+    text-align: center !important;
+  }
+  
   /* Deixando apenas as regras necessárias para a tabela */
   #resultsSection,
   .card-header, 
